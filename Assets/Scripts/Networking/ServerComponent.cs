@@ -16,7 +16,8 @@ public class ServerComponent : MonoBehaviour
     void Start()
     {
         server = new Server<GreekMessage>();
-        server.receiver = MessageRecevied;
+        server.messageReceiver = MessageRecevied;
+        server.clientConnectedHandler = () => { Debug.Log("New connection arrived!"); };
         server.ListenAsync();
     }
 
@@ -37,6 +38,11 @@ public class ServerComponent : MonoBehaviour
             GreekMessage message = "Server brodcast!";
             server.SendMessage(message);
         }
+    }
+
+    void OnDestroy()
+    {
+        server.Dispose();
     }
 
 }

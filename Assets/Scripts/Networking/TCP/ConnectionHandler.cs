@@ -7,15 +7,21 @@ using System.Text;
 using System.Threading;
 using UnityEngine;
 
-public class ClientHandler<T> : TCPBase<T>
+public class ConnectionHandler<T> : TCPBase<T>
 {
     private static int listenersCounter = 0;
     private Thread handleThread;
 
-    public ClientHandler(TcpClient client) : base(Interlocked.Increment(ref listenersCounter), client)
+    public ConnectionHandler(TcpClient client) : this(client, null)
+    {
+
+    }
+
+    public ConnectionHandler(TcpClient client, MessageRceiver receiver) : base(Interlocked.Increment(ref listenersCounter), client, receiver)
     {
         Debug.Log("Listener " + id + " is connected to a client");
     }
+
 
     public void Handle()
     {
@@ -28,6 +34,7 @@ public class ClientHandler<T> : TCPBase<T>
             Debug.Log("Listener " + id + " is connected to client stream");
             ReadStream(stream);
         }
+        Debug.Log("Listener " + id + " done listening");
     }
 
     public void HandleAsync()

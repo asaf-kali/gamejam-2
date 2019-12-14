@@ -16,15 +16,16 @@ public class TCPBase<T>
 
     private Byte[] buffer = new Byte[Constants.BUFFER_SIZE];
 
-    public TCPBase(int id) : this(id, null)
+    public TCPBase(int id) : this(id, null, null)
     {
 
     }
 
-    public TCPBase(int id, TcpClient client)
+    public TCPBase(int id, TcpClient client, MessageRceiver messageReceiver)
     {
         this.id = id;
         this.client = client;
+        this.messageReceiver = messageReceiver;
     }
 
     public void SendMessage(T message)
@@ -68,5 +69,16 @@ public class TCPBase<T>
                 messageReceiver(message);
             }
         }
+        Debug.Log("Client " + id + " done reading");
+    }
+
+    public void Close()
+    {
+        client.Close();
+    }
+
+    public void Dispose()
+    {
+        client.Dispose();
     }
 }

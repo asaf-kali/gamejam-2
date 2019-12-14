@@ -9,10 +9,13 @@ using UnityEngine;
 
 public class Server<T>
 {
+    public delegate void ClientConnectedHandler();
+
     private Thread listeningThread;
     private TcpListener listener;
-    private LinkedList<ClientHandler<T>> handlers = new LinkedList<ClientHandler<T>>();
-    public ClientHandler<T>.MessageRceiver receiver = null;
+    private LinkedList<ConnectionHandler<T>> handlers = new LinkedList<ConnectionHandler<T>>();
+    public TCPBase<T>.MessageRceiver messageReceiver = null;
+    public ClientConnectedHandler clientConnectedHandler = null;
 
     public void Listen()
     {
@@ -25,8 +28,9 @@ public class Server<T>
             {
                 Debug.Log("Server is open to new connections...");
                 TcpClient client = listener.AcceptTcpClient();
-                ClientHandler<T> handler = new ClientHandler<T>(client);
-                handler.messageReceiver = receiver;
+                if (clientConnectedHandler != null)
+                    clientConnectedHandler();
+                ConnectionHandler<T> handler = new ConnectionHandler<T>(client, messageReceiver);
                 handlers.AddLast(handler);
                 handler.HandleAsync();
             }
@@ -46,9 +50,18 @@ public class Server<T>
 
     public void SendMessage(T message)
     {
-        foreach (ClientHandler<T> handler in handlers)
+        foreach (var handler in handlers)
         {
             handler.SendMessage(message);
+        }
+    }
+
+    public void Dispose()
+    {
+        listener.Stop();
+        foreach (var handler in handlers)
+        {
+            handler.Dispose();
         }
     }
 

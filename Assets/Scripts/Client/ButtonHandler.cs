@@ -8,6 +8,11 @@ public class ButtonHandler : MonoBehaviour
     public Text serverIpInput;
     public ClientComponent client;
 
+    void Start()
+    {
+
+    }
+
     public void Click()
     {
         Debug.Log("Trying to connect to " + serverIpInput.text);

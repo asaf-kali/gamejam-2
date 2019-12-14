@@ -12,6 +12,10 @@ public class ClientComponent : MonoBehaviour
 
     public void Connect(string ip)
     {
+        if (client != null)
+        {
+            client.Dispose();
+        }
         client = new Client<GreekMessage>(GetInstanceID(), ip);
         client.ConnetToServerAsync();
     }
@@ -26,4 +30,10 @@ public class ClientComponent : MonoBehaviour
     {
 
     }
+
+    void OnDestroy()
+    {
+        client.Dispose();
+    }
+
 }
