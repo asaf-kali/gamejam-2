@@ -10,7 +10,7 @@ using UnityEngine;
 public class Server<T>
 {
     private Thread listeningThread;
-    private TcpListener tcpListener;
+    private TcpListener listener;
     private LinkedList<ClientHandler<T>> handlers = new LinkedList<ClientHandler<T>>();
     public ClientHandler<T>.MessageRceiver receiver = null;
 
@@ -18,14 +18,14 @@ public class Server<T>
     {
         try
         {
-            tcpListener = new TcpListener(IPAddress.Any, Constants.PORT);
-            tcpListener.Start();
+            listener = new TcpListener(IPAddress.Any, Constants.PORT);
+            listener.Start();
             Debug.Log("Server started listening");
             while (true)
             {
                 Debug.Log("Server is open to new connections...");
-                TcpClient connectedTcpClient = tcpListener.AcceptTcpClient();
-                ClientHandler<T> handler = new ClientHandler<T>(connectedTcpClient);
+                TcpClient client = listener.AcceptTcpClient();
+                ClientHandler<T> handler = new ClientHandler<T>(client);
                 handler.messageReceiver = receiver;
                 handlers.AddLast(handler);
                 handler.HandleAsync();

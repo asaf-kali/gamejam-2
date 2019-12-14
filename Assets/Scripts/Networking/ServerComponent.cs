@@ -9,22 +9,24 @@ using UnityEngine;
 
 public class ServerComponent : MonoBehaviour
 {
-    private Server<MyMessage> server;
+    private Server<GreekMessage> server;
 
     public Text someText;
 
     void Start()
     {
-        server = new Server<MyMessage>();
+        server = new Server<GreekMessage>();
         server.receiver = MessageRecevied;
         server.ListenAsync();
     }
 
-    void MessageRecevied(MyMessage message)
+    void MessageRecevied(GreekMessage message)
     {
         MainThreadDispatcher.Instance.Enqueue(() =>
         {
-            someText.text = message.Data;
+            string text = "Client " + message.ShortId + " said: " + message.Data;
+            someText.text = text;
+            Debug.Log(text);
         });
     }
 
@@ -32,8 +34,7 @@ public class ServerComponent : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            MyMessage message = new MyMessage();
-            message.Data = "Action form " + SystemInfo.deviceUniqueIdentifier.ToString();
+            GreekMessage message = "Server brodcast!";
             server.SendMessage(message);
         }
     }

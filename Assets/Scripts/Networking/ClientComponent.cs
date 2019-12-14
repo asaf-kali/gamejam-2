@@ -8,18 +8,17 @@ using UnityEngine;
 
 public class ClientComponent : MonoBehaviour
 {
-    private Client<MyMessage> client;
+    private Client<GreekMessage> client;
 
     public void Connect(string ip)
     {
-        client = new Client<MyMessage>(GetInstanceID(), ip);
+        client = new Client<GreekMessage>(GetInstanceID(), ip);
         client.ConnetToServerAsync();
     }
 
     public void SendMessage()
     {
-        MyMessage message = new MyMessage();
-        message.Data = "Action form " + SystemInfo.deviceUniqueIdentifier.ToString();
+        GreekMessage message = "Dudidu!";
         client.SendMessage(message);
     }
 
