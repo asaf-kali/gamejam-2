@@ -6,19 +6,19 @@ using System.Text;
 using System.Threading;
 using UnityEngine;
 
-public class Client : TCPBase
+public class Client<T> : TCPBase<T>
 {
-    public string serverIp = "localhost";
-    private TcpClient socketConnection;
+    private string serverIp;
     private Thread listeningThread;
 
-    public Client(int id) : base(id)
+    public Client(int id, string serverIp) : base(id)
     {
-
+        this.serverIp = serverIp;
     }
 
     public void ConnetToServerAsync()
     {
+        Debug.Log("Starting new thread...");
         listeningThread = new Thread(new ThreadStart(ConnectToServer));
         listeningThread.IsBackground = true;
         listeningThread.Start();
@@ -28,10 +28,12 @@ public class Client : TCPBase
     {
         try
         {
-            socketConnection = new TcpClient(serverIp, Constants.PORT);
+            Debug.Log("Client opening socket...");
+            client = new TcpClient(serverIp, Constants.PORT);
             while (true)
             {
-                using (NetworkStream stream = socketConnection.GetStream())
+                Debug.Log("Client opening stream...");
+                using (NetworkStream stream = client.GetStream())
                 {
                     ReadStream(stream);
                 }
@@ -43,26 +45,4 @@ public class Client : TCPBase
         }
     }
 
-    public void SendMessage()
-    {
-        if (socketConnection == null)
-        {
-            return;
-        }
-        try
-        {		
-            NetworkStream stream = socketConnection.GetStream();
-            if (stream.CanWrite)
-            {
-                string clientMessage = "This is a message from clients " + id;       
-                byte[] clientMessageAsByteArray = Encoding.ASCII.GetBytes(clientMessage);
-                stream.Write(clientMessageAsByteArray, 0, clientMessageAsByteArray.Length);
-                Debug.Log("Client sent his message - should be received by server");
-            }
-        }
-        catch (SocketException socketException)
-        {
-            Debug.Log("Socket exception: " + socketException);
-        }
-    }
 }

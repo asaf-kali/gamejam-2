@@ -8,19 +8,23 @@ using UnityEngine;
 
 public class ClientComponent : MonoBehaviour
 {
-    private Client client;
+    private Client<MyMessage> client;
 
-    void Start()
+    public void Connect(string ip)
     {
-        client = new Client(GetInstanceID());
+        client = new Client<MyMessage>(GetInstanceID(), ip);
         client.ConnetToServerAsync();
+    }
+
+    public void SendMessage()
+    {
+        MyMessage message = new MyMessage();
+        message.Data = "Action form " + SystemInfo.deviceUniqueIdentifier.ToString();
+        client.SendMessage(message);
     }
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            client.SendMessage();
-        }
+
     }
 }
