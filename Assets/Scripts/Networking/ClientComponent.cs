@@ -22,7 +22,7 @@ public class ClientComponent : MonoBehaviour
 
     public void SendMessage()
     {
-        GreekMessage message = "Dudidu!";
+        GreekMessage message = "push";
         client.SendMessage(message);
     }
 

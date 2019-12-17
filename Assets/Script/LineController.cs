@@ -14,12 +14,12 @@ public class LineController : MonoBehaviour
 
     void Start()
     {
-        //var v = Camera.main.camera.orthographicSize;
+        // var v = Camera.main.camera.orthographicSize;
 
         Debug.Log(tag + " y pos = " + transform.localPosition.y.ToString() + "x pos = " + transform.position.x.ToString());
 
     }
-    // Update is called once per frame
+    
     void Update()
     {
         if (transform.localPosition.y <= endY)
@@ -30,7 +30,7 @@ public class LineController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        //rigidbody.MovePosition(rigidbody.position + moveDirection * moveSpeed * Time.fixedDeltaTime);
+        // rigidbody.MovePosition(rigidbody.position + moveDirection * moveSpeed * Time.fixedDeltaTime);
     }
 
 }

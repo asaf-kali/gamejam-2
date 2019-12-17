@@ -11,8 +11,6 @@ public class ServerComponent : MonoBehaviour
 {
     private Server<GreekMessage> server;
 
-    public Text someText;
-
     void Start()
     {
         server = new Server<GreekMessage>();
@@ -26,8 +24,11 @@ public class ServerComponent : MonoBehaviour
         MainThreadDispatcher.Instance.Enqueue(() =>
         {
             string text = "Client " + message.ShortId + " said: " + message.Data;
-            someText.text = text;
             Debug.Log(text);
+            if (message.Data == "push")
+            {
+                GameControl.instance.PushBall();
+            }
         });
     }
 
