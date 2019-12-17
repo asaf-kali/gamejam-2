@@ -33,7 +33,8 @@ public class ClientComponent : MonoBehaviour
 
     void OnDestroy()
     {
-        client.Dispose();
+        if (client != null)
+            client.Dispose();
     }
 
 }

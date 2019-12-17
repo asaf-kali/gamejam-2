@@ -79,6 +79,7 @@ public class TCPBase<T>
 
     public void Dispose()
     {
-        client.Dispose();
+        if (client != null)
+            client.Dispose();
     }
 }
