@@ -12,6 +12,7 @@ public class LobbyManager : MonoBehaviour
 
     void Start()
     {
+        server.Init();
         server.server.newClientsHandler = NewClient;
         server.server.disconnectHandler = ClientDiconnect;
     }
@@ -30,14 +31,17 @@ public class LobbyManager : MonoBehaviour
 
     void UpdateText()
     {
-        string text = "";
-        if (godsCount == 0)
-            text = "0 אלים מחוברים...";
-        else if (godsCount == 0)
-            text = "אל אחד מחובר...";
-        else
-            text = godsCount + " אלים מחוברים!";
-        connectedGods.text = text;
+        MainThreadDispatcher.Instance.Enqueue(() =>
+        {
+            string text = "";
+            if (godsCount == 0)
+                text = "0 אלים מחוברים...";
+            else if (godsCount == 1)
+                text = "אל אחד מחובר...";
+            else
+                text = godsCount + " אלים מחוברים!";
+            connectedGods.text = text;
+        });
     }
 
     void Update()
