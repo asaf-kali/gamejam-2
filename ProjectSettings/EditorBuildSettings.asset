@@ -14,4 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Client.unity
     guid: 70cc1e0e711484c41ab5e039c90cc0f2
+  - enabled: 1
+    path: Assets/Scenes/God.unity
+    guid: 5a544c8946faddf479a5f41b4d0cb14f
   m_configObjects: {}

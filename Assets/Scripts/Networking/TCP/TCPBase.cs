@@ -30,7 +30,7 @@ public class TCPBase<T>
 
     public void SendMessage(T message)
     {
-        if (client == null)
+        if (!IsConnected)
         {
             return;
         }
@@ -60,7 +60,7 @@ public class TCPBase<T>
         int length;
         while ((length = stream.Read(buffer, 0, buffer.Length)) != 0)
         {
-            Debug.Log("Incoming data at listener " + id + " length is " + length);
+            Debug.Log("Incoming data at client " + id + " length is " + length);
             var data = new byte[length];
             Array.Copy(buffer, 0, data, 0, length);
             T message = MessageConverter<T>.Instance.Desrialize(data);
@@ -70,6 +70,16 @@ public class TCPBase<T>
             }
         }
         Debug.Log("Client " + id + " done reading");
+    }
+
+    public bool IsConnected
+    {
+        get
+        {
+            if (client == null)
+                return false;
+            return client.Connected;
+        }
     }
 
     public void Close()

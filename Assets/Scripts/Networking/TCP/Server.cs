@@ -52,7 +52,14 @@ public class Server<T>
     {
         foreach (var handler in handlers)
         {
-            handler.SendMessage(message);
+            try
+            {
+                handler.SendMessage(message);
+            }
+            catch (InvalidOperationException)
+            {
+
+            }
         }
     }
 

@@ -1,6 +1,6 @@
 @echo off
 
-set BRANCHES=asaf dalik yael
+set BRANCHES=dalik yael asaf
 
 for %%b in (%BRANCHES%) do ( 
    git checkout %%b

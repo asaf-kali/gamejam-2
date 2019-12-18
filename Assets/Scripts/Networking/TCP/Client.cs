@@ -8,8 +8,11 @@ using UnityEngine;
 
 public class Client<T> : TCPBase<T>
 {
+    public delegate void OnConnect();
+
     private string serverIp;
     private Thread listeningThread;
+    public OnConnect onConnect;
 
     public Client(int id, string serverIp) : base(id)
     {
@@ -32,9 +35,11 @@ public class Client<T> : TCPBase<T>
             client = new TcpClient(serverIp, Constants.PORT);
             while (true)
             {
-                Debug.Log("Client opening stream...");
                 using (NetworkStream stream = client.GetStream())
                 {
+                    Debug.Log("Client connected to a stream");
+                    if (onConnect != null)
+                        onConnect();
                     ReadStream(stream);
                 }
             }
