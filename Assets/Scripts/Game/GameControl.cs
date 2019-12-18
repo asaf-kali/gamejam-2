@@ -40,10 +40,12 @@ public class GameControl : MonoBehaviour
             return;
         }
         sc = scs[0];
+        sc.server.MessagesHandler = MessageReceived;
     }
 
-    void Update()
+    public void MessageReceived(MessageClient message)
     {
+
     }
 
     public void PushBall()

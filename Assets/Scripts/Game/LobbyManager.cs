@@ -48,9 +48,4 @@ public class LobbyManager : MonoBehaviour
     {
         server.MoveToGame();
     }
-
-    void Update()
-    {
-
-    }
 }

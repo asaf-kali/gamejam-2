@@ -26,9 +26,4 @@ public class ResolutionManager : MonoBehaviour
             Camera.main.orthographicSize = height / MAGIC;
         }
     }
-
-    void Update()
-    {
-
-    }
 }
