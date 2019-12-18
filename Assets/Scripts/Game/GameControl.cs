@@ -45,7 +45,13 @@ public class GameControl : MonoBehaviour
 
     public void MessageReceived(MessageClient message)
     {
-
+        // **** Implement here response from clients ****
+    }
+    public void NotifyClients()
+    {
+        // **** Implement here command to clients like this: ****
+        MessageServer command = new MessageServer("Do something");
+        sc.server.SendMessage(command);
     }
 
     public void PushBall()
