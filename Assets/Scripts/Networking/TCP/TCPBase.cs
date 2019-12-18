@@ -8,24 +8,27 @@ using UnityEngine;
 
 public class TCPBase<T>
 {
-    public delegate void MessageRceiver(T message);
+    public delegate void MessagesHandler(T message);
+    public delegate void DisconnectHandler(TCPBase<T> self);
 
     protected int id;
     protected TcpClient client;
-    public MessageRceiver messageReceiver = null;
+    public MessagesHandler messageReceiver = null;
+    public DisconnectHandler disconnectHandler = null;
 
     private Byte[] buffer = new Byte[Constants.BUFFER_SIZE];
 
-    public TCPBase(int id) : this(id, null, null)
+    public TCPBase(int id) : this(id, null, null, null)
     {
 
     }
 
-    public TCPBase(int id, TcpClient client, MessageRceiver messageReceiver)
+    public TCPBase(int id, TcpClient client, MessagesHandler messageReceiver, DisconnectHandler disconnectHandler)
     {
         this.id = id;
         this.client = client;
         this.messageReceiver = messageReceiver;
+        this.disconnectHandler = disconnectHandler;
     }
 
     public void SendMessage(T message)
@@ -65,11 +68,10 @@ public class TCPBase<T>
             Array.Copy(buffer, 0, data, 0, length);
             T message = MessageConverter<T>.Instance.Desrialize(data);
             if (messageReceiver != null)
-            {
                 messageReceiver(message);
-            }
         }
         Debug.Log("Client " + id + " done reading");
+        Dispose();
     }
 
     public bool IsConnected
@@ -82,14 +84,13 @@ public class TCPBase<T>
         }
     }
 
-    public void Close()
-    {
-        client.Close();
-    }
-
     public void Dispose()
     {
+        if (disconnectHandler != null)
+            disconnectHandler(this);
         if (client != null)
+        {
             client.Dispose();
+        }
     }
 }

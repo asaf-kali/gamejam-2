@@ -9,13 +9,13 @@ using UnityEngine;
 
 public class ServerComponent : MonoBehaviour
 {
-    private Server<GreekMessage> server;
+    public Server<GreekMessage> server;
 
     void Start()
     {
         server = new Server<GreekMessage>();
-        server.messageReceiver = MessageRecevied;
-        server.clientConnectedHandler = () => { Debug.Log("New connection arrived!"); };
+        // server.messageReceiver = MessageRecevied;
+        // server.clientConnectedHandler = () => { Debug.Log("New connection arrived!"); };
         server.ListenAsync();
     }
 

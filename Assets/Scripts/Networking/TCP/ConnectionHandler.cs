@@ -12,12 +12,13 @@ public class ConnectionHandler<T> : TCPBase<T>
     private static int listenersCounter = 0;
     private Thread handleThread;
 
-    public ConnectionHandler(TcpClient client) : this(client, null)
+    public ConnectionHandler(TcpClient client) : this(client, null, null)
     {
 
     }
 
-    public ConnectionHandler(TcpClient client, MessageRceiver receiver) : base(Interlocked.Increment(ref listenersCounter), client, receiver)
+    public ConnectionHandler(TcpClient client, MessagesHandler receiver, DisconnectHandler disconnectHandler)
+    : base(Interlocked.Increment(ref listenersCounter), client, receiver, disconnectHandler)
     {
         Debug.Log("Listener " + id + " is connected to a client");
     }

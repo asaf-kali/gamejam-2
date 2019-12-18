@@ -436,7 +436,7 @@ MonoBehaviour:
   m_material: {fileID: 0}
   m_sharedMaterial: {fileID: 0}
   m_isDefaultMaterial: 0
-  m_padding: 1.25
+  m_padding: 0
   m_canvasRenderer: {fileID: 301370240}
   m_TextComponent: {fileID: 4580413}
   m_materialReferenceIndex: 1
@@ -801,6 +801,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2035c4942fe50f844abd53344c8f464b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  server: {fileID: 725349871}
+  connectedGods: {fileID: 1561370481}
 --- !u!1 &1561370479
 GameObject:
   m_ObjectHideFlags: 0
