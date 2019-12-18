@@ -44,6 +44,11 @@ public class LobbyManager : MonoBehaviour
         });
     }
 
+    public void StartClicked()
+    {
+        server.MoveToGame();
+    }
+
     void Update()
     {
 

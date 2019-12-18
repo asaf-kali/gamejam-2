@@ -9,11 +9,13 @@ using UnityEngine;
 
 public class ServerComponent : MonoBehaviour
 {
+    private AsyncSceneLoader loader;
     public Server<GreekMessage> server;
     private bool initCalled = false;
 
     void Start()
     {
+        loader = GetComponent<AsyncSceneLoader>();
         Init();
     }
 
@@ -39,6 +41,11 @@ public class ServerComponent : MonoBehaviour
                 GameControl.instance.PushBall();
             }
         });
+    }
+
+    public void MoveToGame()
+    {
+        loader.LoadNext();
     }
 
     void Update()
