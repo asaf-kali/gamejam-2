@@ -9,14 +9,14 @@ using UnityEngine;
 
 public class Server<SERV, CLNT>
 {
-    public delegate void NewClientsHandler();
+    public delegate void NewClientEvent();
 
     private Thread listeningThread;
     private TcpListener listener;
     private LinkedList<ConnectionHandler<SERV, CLNT>> handlers = new LinkedList<ConnectionHandler<SERV, CLNT>>();
-    public NewClientsHandler newClientsHandler = null;
-    public TCPBase<SERV, CLNT>.MessagesHandler messagesHandler = null;
-    public TCPBase<SERV, CLNT>.DisconnectHandler disconnectHandler = null;
+    public NewClientEvent ClientsHandler = null;
+    public TCPBase<SERV, CLNT>.MessageReceivedEvent MessagesHandler = null;
+    public TCPBase<SERV, CLNT>.DiconnectedEvent DisconnectionHandler = null;
 
     public void Listen()
     {
@@ -29,8 +29,8 @@ public class Server<SERV, CLNT>
             {
                 Debug.Log("Server is open to new connections...");
                 TcpClient client = listener.AcceptTcpClient();
-                if (newClientsHandler != null)
-                    newClientsHandler();
+                if (ClientsHandler != null)
+                    ClientsHandler();
                 ConnectionHandler<SERV, CLNT> handler = new ConnectionHandler<SERV, CLNT>(client, MessageReceived, DisconnectHandler);
                 handlers.AddLast(handler);
                 handler.HandleAsync();
@@ -51,13 +51,13 @@ public class Server<SERV, CLNT>
 
     private void MessageReceived(CLNT message)
     {
-        if (messagesHandler != null)
-            messagesHandler(message);
+        if (MessagesHandler != null)
+            MessagesHandler(message);
     }
     private void DisconnectHandler(TCPBase<SERV, CLNT> client)
     {
-        if (disconnectHandler != null)
-            disconnectHandler(client);
+        if (DisconnectionHandler != null)
+            DisconnectionHandler(client);
     }
 
     public void SendMessage(SERV message)

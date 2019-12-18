@@ -7,9 +7,9 @@ public class GameControl : MonoBehaviour
 {
     public static GameControl instance;
 
+    public ServerComponent sc;
     public GameObject player;
     public GameObject ball;
-
 
     private int score = 0;
     public bool gameOver { get; private set; }
@@ -24,6 +24,22 @@ public class GameControl : MonoBehaviour
             return;
         }
         gameOver = false;
+    }
+
+    void Start()
+    {
+        SearchForServerComp();
+    }
+
+    void SearchForServerComp()
+    {
+        ServerComponent[] scs = FindObjectsOfType<ServerComponent>();
+        if (scs.Length != 1)
+        {
+            Debug.LogError("Wrong number of ServerComponents: " + scs.Length + " (should be 1).");
+            return;
+        }
+        sc = scs[0];
     }
 
     void Update()

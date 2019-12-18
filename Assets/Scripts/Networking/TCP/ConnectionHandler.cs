@@ -17,8 +17,8 @@ public class ConnectionHandler<SERV, CLNT> : TCPBase<SERV, CLNT>
 
     }
 
-    public ConnectionHandler(TcpClient client, MessagesHandler receiver, DisconnectHandler disconnectHandler)
-    : base(Interlocked.Increment(ref listenersCounter), client, receiver, disconnectHandler)
+    public ConnectionHandler(TcpClient client, MessageReceivedEvent messageHandler, DiconnectedEvent disconnectHandler)
+    : base(Interlocked.Increment(ref listenersCounter), client, messageHandler, disconnectHandler)
     {
         Debug.Log("Listener " + id + " is connected to a client");
     }

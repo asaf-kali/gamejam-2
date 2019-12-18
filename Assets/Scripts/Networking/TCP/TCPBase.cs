@@ -8,13 +8,13 @@ using UnityEngine;
 
 public class TCPBase<SEND, RCV>
 {
-    public delegate void MessagesHandler(RCV message);
-    public delegate void DisconnectHandler(TCPBase<SEND, RCV> self);
+    public delegate void MessageReceivedEvent(RCV message);
+    public delegate void DiconnectedEvent(TCPBase<SEND, RCV> self);
 
     protected int id;
     protected TcpClient client;
-    public MessagesHandler messageReceiver = null;
-    public DisconnectHandler disconnectHandler = null;
+    public MessageReceivedEvent MessagesHandler = null;
+    public DiconnectedEvent DiconnectionHandler = null;
 
     private Byte[] buffer = new Byte[Constants.BUFFER_SIZE];
 
@@ -23,12 +23,12 @@ public class TCPBase<SEND, RCV>
 
     }
 
-    public TCPBase(int id, TcpClient client, MessagesHandler messageReceiver, DisconnectHandler disconnectHandler)
+    public TCPBase(int id, TcpClient client, MessageReceivedEvent messageReceiver, DiconnectedEvent disconnectHandler)
     {
         this.id = id;
         this.client = client;
-        this.messageReceiver = messageReceiver;
-        this.disconnectHandler = disconnectHandler;
+        this.MessagesHandler = messageReceiver;
+        this.DiconnectionHandler = disconnectHandler;
     }
 
     public void SendMessage(SEND message)
@@ -67,8 +67,8 @@ public class TCPBase<SEND, RCV>
             var data = new byte[length];
             Array.Copy(buffer, 0, data, 0, length);
             RCV message = MessageConverter<RCV>.Instance.Desrialize(data);
-            if (messageReceiver != null)
-                messageReceiver(message);
+            if (MessagesHandler != null)
+                MessagesHandler(message);
         }
         Debug.Log("Client " + id + " done reading");
         Dispose();
@@ -86,8 +86,8 @@ public class TCPBase<SEND, RCV>
 
     public void Dispose()
     {
-        if (disconnectHandler != null)
-            disconnectHandler(this);
+        if (DiconnectionHandler != null)
+            DiconnectionHandler(this);
         if (client != null)
         {
             client.Dispose();

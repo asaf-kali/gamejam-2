@@ -23,7 +23,8 @@ public class ClientComponent : MonoBehaviour
             client.Dispose();
         }
         client = new Client<MessageClient, MessageServer>(GetInstanceID(), ip);
-        client.onConnect = OnConnect;
+        client.ConnectionHandler = OnConnect;
+        client.MessagesHandler = MessageReceived;
         client.ConnetToServerAsync();
     }
 
@@ -31,6 +32,11 @@ public class ClientComponent : MonoBehaviour
     {
         MessageClient message = "dudi";
         client.SendMessage(message);
+    }
+
+    public void MessageReceived(MessageServer message)
+    {
+        Debug.Log("Message from " + message.ShortId + ": " + message.Data);
     }
 
     void OnConnect()

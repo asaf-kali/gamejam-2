@@ -13,8 +13,8 @@ public class LobbyManager : MonoBehaviour
     void Start()
     {
         server.Init();
-        server.server.newClientsHandler = NewClient;
-        server.server.disconnectHandler = ClientDiconnect;
+        server.server.ClientsHandler = NewClient;
+        server.server.DisconnectionHandler = ClientDiconnect;
     }
 
     void NewClient()
