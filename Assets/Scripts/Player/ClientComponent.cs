@@ -9,7 +9,7 @@ using UnityEngine;
 public class ClientComponent : MonoBehaviour
 {
     private AsyncSceneLoader loader;
-    private Client<GreekMessage> client;
+    private Client<MessageClient, MessageServer> client;
 
     void Start()
     {
@@ -22,14 +22,14 @@ public class ClientComponent : MonoBehaviour
         {
             client.Dispose();
         }
-        client = new Client<GreekMessage>(GetInstanceID(), ip);
+        client = new Client<MessageClient, MessageServer>(GetInstanceID(), ip);
         client.onConnect = OnConnect;
         client.ConnetToServerAsync();
     }
 
     public void SendMessage()
     {
-        GreekMessage message = "push";
+        MessageClient message = "dudi";
         client.SendMessage(message);
     }
 

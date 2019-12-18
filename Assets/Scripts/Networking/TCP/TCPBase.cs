@@ -6,10 +6,10 @@ using System.Text;
 using System.Threading;
 using UnityEngine;
 
-public class TCPBase<T>
+public class TCPBase<SEND, RCV>
 {
-    public delegate void MessagesHandler(T message);
-    public delegate void DisconnectHandler(TCPBase<T> self);
+    public delegate void MessagesHandler(RCV message);
+    public delegate void DisconnectHandler(TCPBase<SEND, RCV> self);
 
     protected int id;
     protected TcpClient client;
@@ -31,7 +31,7 @@ public class TCPBase<T>
         this.disconnectHandler = disconnectHandler;
     }
 
-    public void SendMessage(T message)
+    public void SendMessage(SEND message)
     {
         if (!IsConnected)
         {
@@ -42,7 +42,7 @@ public class TCPBase<T>
             NetworkStream stream = client.GetStream();
             if (stream.CanWrite)
             {
-                var data = MessageConverter<T>.Instance.Serialize(message);
+                var data = MessageConverter<SEND>.Instance.Serialize(message);
                 stream.Write(data, 0, data.Length);
                 Debug.Log("Client " + id + " sent message - should be received by partner");
             }
@@ -66,7 +66,7 @@ public class TCPBase<T>
             Debug.Log("Incoming data at client " + id + " length is " + length);
             var data = new byte[length];
             Array.Copy(buffer, 0, data, 0, length);
-            T message = MessageConverter<T>.Instance.Desrialize(data);
+            RCV message = MessageConverter<RCV>.Instance.Desrialize(data);
             if (messageReceiver != null)
                 messageReceiver(message);
         }

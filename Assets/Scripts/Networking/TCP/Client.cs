@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading;
 using UnityEngine;
 
-public class Client<T> : TCPBase<T>
+public class Client<SEND, RCV> : TCPBase<SEND, RCV>
 {
     public delegate void OnConnect();
 

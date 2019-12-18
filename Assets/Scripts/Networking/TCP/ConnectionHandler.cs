@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading;
 using UnityEngine;
 
-public class ConnectionHandler<T> : TCPBase<T>
+public class ConnectionHandler<SERV, CLNT> : TCPBase<SERV, CLNT>
 {
     private static int listenersCounter = 0;
     private Thread handleThread;

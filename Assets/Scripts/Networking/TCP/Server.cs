@@ -7,16 +7,16 @@ using System.Text;
 using System.Threading;
 using UnityEngine;
 
-public class Server<T>
+public class Server<SERV, CLNT>
 {
     public delegate void NewClientsHandler();
 
     private Thread listeningThread;
     private TcpListener listener;
-    private LinkedList<ConnectionHandler<T>> handlers = new LinkedList<ConnectionHandler<T>>();
+    private LinkedList<ConnectionHandler<SERV, CLNT>> handlers = new LinkedList<ConnectionHandler<SERV, CLNT>>();
     public NewClientsHandler newClientsHandler = null;
-    public TCPBase<T>.MessagesHandler messagesHandler = null;
-    public TCPBase<T>.DisconnectHandler disconnectHandler = null;
+    public TCPBase<SERV, CLNT>.MessagesHandler messagesHandler = null;
+    public TCPBase<SERV, CLNT>.DisconnectHandler disconnectHandler = null;
 
     public void Listen()
     {
@@ -31,7 +31,7 @@ public class Server<T>
                 TcpClient client = listener.AcceptTcpClient();
                 if (newClientsHandler != null)
                     newClientsHandler();
-                ConnectionHandler<T> handler = new ConnectionHandler<T>(client, MessageReceived, DisconnectHandler);
+                ConnectionHandler<SERV, CLNT> handler = new ConnectionHandler<SERV, CLNT>(client, MessageReceived, DisconnectHandler);
                 handlers.AddLast(handler);
                 handler.HandleAsync();
             }
@@ -49,18 +49,18 @@ public class Server<T>
         listeningThread.Start();
     }
 
-    private void MessageReceived(T message)
+    private void MessageReceived(CLNT message)
     {
         if (messagesHandler != null)
             messagesHandler(message);
     }
-    private void DisconnectHandler(TCPBase<T> client)
+    private void DisconnectHandler(TCPBase<SERV, CLNT> client)
     {
         if (disconnectHandler != null)
             disconnectHandler(client);
     }
 
-    public void SendMessage(T message)
+    public void SendMessage(SERV message)
     {
         foreach (var handler in handlers)
         {
@@ -78,7 +78,7 @@ public class Server<T>
 
     private void RemoveDisconnectedHandlers()
     {
-        LinkedList<ConnectionHandler<T>> diconnected = new LinkedList<ConnectionHandler<T>>();
+        LinkedList<ConnectionHandler<SERV, CLNT>> diconnected = new LinkedList<ConnectionHandler<SERV, CLNT>>();
         foreach (var handler in handlers)
         {
             if (!handler.IsConnected)

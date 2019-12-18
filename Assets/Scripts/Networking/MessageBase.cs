@@ -3,14 +3,24 @@ using System.IO;
 using UnityEngine;
 
 [DataContract]
-public struct GreekMessage
+public class MessageBase
 {
     private const short SHORT_LENGTH = 6;
 
     [DataMember]
-    public string Identifier;
+    public readonly string Identifier;
     [DataMember]
     public string Data;
+
+    public MessageBase()
+    {
+        Identifier = SystemInfo.deviceUniqueIdentifier;
+    }
+
+    public MessageBase(string data) : this()
+    {
+        Data = data;
+    }
 
     public string ShortId
     {
@@ -21,9 +31,8 @@ public struct GreekMessage
             return Identifier.Substring(Identifier.Length - SHORT_LENGTH);
         }
     }
-
-    public static implicit operator GreekMessage(string data)
+    public static implicit operator MessageBase(string data)
     {
-        return new GreekMessage() { Identifier = SystemInfo.deviceUniqueIdentifier, Data = data };
+        return new MessageBase(data);
     }
 }
