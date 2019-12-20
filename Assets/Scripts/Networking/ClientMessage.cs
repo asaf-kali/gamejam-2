@@ -12,7 +12,8 @@ public class ClientMessage : BaseMessage
         ANSWER,
     }
 
-    public MessageKind Kind = MessageKind.UNDEFINED;
+    [DataMember]
+    public MessageKind Kind;
 
     public ClientMessage() : this(null)
     {

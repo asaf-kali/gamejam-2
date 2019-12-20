@@ -12,7 +12,8 @@ public class ServerMessage : BaseMessage
         NEW_OBSTICLE,
     }
 
-    public MessageKind Kind = MessageKind.UNDEFINED;
+    [DataMember]
+    public MessageKind Kind;
 
     public ServerMessage() : this(null)
     {

@@ -25,15 +25,18 @@ public class GodController : MonoBehaviour
 
     void MessageReceived(ServerMessage message)
     {
-        Debug.Log("Message from server " + message.ShortId);
-        Debug.Log(MessageConverter<ServerMessage>.Instance.Serialize(message));
-        if (message.Kind == ServerMessage.MessageKind.HELLO)
+        MainThreadDispatcher.Instance.Enqueue(() =>
         {
-            Debug.Log("Hello message, responding");
-            ClientMessage msg = new ClientMessage("Hi!");
-            msg.Kind = ClientMessage.MessageKind.HELLO_RESPONSE;
-            cc.client.SendMessage(msg);
-        }
+            Debug.Log("Message from server " + message.ShortId);
+            Debug.Log(message.Kind + ": " + message.Data);
+            if (message.Kind == ServerMessage.MessageKind.HELLO)
+            {
+                Debug.Log("Hello message, responding");
+                ClientMessage msg = new ClientMessage("Hi!");
+                msg.Kind = ClientMessage.MessageKind.HELLO_RESPONSE;
+                cc.client.SendMessage(msg);
+            }
+        });
     }
 
     void Update()
