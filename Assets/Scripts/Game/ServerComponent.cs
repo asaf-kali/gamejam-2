@@ -10,7 +10,7 @@ using UnityEngine;
 public class ServerComponent : MonoBehaviour
 {
     private AsyncSceneLoader loader;
-    public Server<MessageServer, MessageClient> server;
+    public Server<ServerMessage, ClientMessage> server;
     private bool initCalled = false;
 
     void Start()
@@ -24,13 +24,13 @@ public class ServerComponent : MonoBehaviour
         if (initCalled)
             return;
         initCalled = true;
-        server = new Server<MessageServer, MessageClient>();
+        server = new Server<ServerMessage, ClientMessage>();
         server.ListenAsync();
         // server.messageReceiver = MessageRecevied;
         // server.clientConnectedHandler = () => { Debug.Log("New connection arrived!"); };
     }
 
-    void MessageRecevied(MessageClient message)
+    void MessageRecevied(ClientMessage message)
     {
         MainThreadDispatcher.Instance.Enqueue(() =>
         {
@@ -52,7 +52,7 @@ public class ServerComponent : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            MessageServer message = "Hi from server!";
+            ServerMessage message = "Hi from server!";
             server.SendMessage(message);
         }
     }

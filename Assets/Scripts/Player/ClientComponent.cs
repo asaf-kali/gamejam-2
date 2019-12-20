@@ -9,7 +9,7 @@ using UnityEngine;
 public class ClientComponent : MonoBehaviour
 {
     private AsyncSceneLoader loader;
-    private Client<MessageClient, MessageServer> client;
+    public Client<ClientMessage, ServerMessage> client;
 
     void Start()
     {
@@ -22,7 +22,7 @@ public class ClientComponent : MonoBehaviour
         {
             client.Dispose();
         }
-        client = new Client<MessageClient, MessageServer>(GetInstanceID(), ip);
+        client = new Client<ClientMessage, ServerMessage>(GetInstanceID(), ip);
         client.ConnectionHandler = OnConnect;
         client.MessagesHandler = MessageReceived;
         client.ConnetToServerAsync();
@@ -30,11 +30,11 @@ public class ClientComponent : MonoBehaviour
 
     public void SendMessage()
     {
-        MessageClient message = "dudi";
+        ClientMessage message = "dudi";
         client.SendMessage(message);
     }
 
-    public void MessageReceived(MessageServer message)
+    public void MessageReceived(ServerMessage message)
     {
         Debug.Log("Message from " + message.ShortId + ": " + message.Data);
     }

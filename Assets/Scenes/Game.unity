@@ -763,9 +763,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ed57b7794eb91447b5a0413a3dc1980, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sc: {fileID: 0}
   player: {fileID: 338146351}
   ball: {fileID: 39175435}
+  obsticleTimeout: 2
 --- !u!1 &1587063093
 GameObject:
   m_ObjectHideFlags: 0

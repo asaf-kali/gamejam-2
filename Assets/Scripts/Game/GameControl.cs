@@ -1,17 +1,21 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
+using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 
 public class GameControl : MonoBehaviour
 {
     public static GameControl instance;
 
-    public ServerComponent sc;
     public GameObject player;
     public GameObject ball;
+    public int obsticleTimeout;
 
+    private ServerComponent sc;
+    private HashSet<string> clients = new HashSet<string>();
     private int score = 0;
+    private float timeSinceLastObsticle = 0f;
+    private bool isObsticleActive = false;
     public bool gameOver { get; private set; }
 
     void Awake()
@@ -29,6 +33,14 @@ public class GameControl : MonoBehaviour
     void Start()
     {
         SearchForServerComp();
+        ListClients();
+    }
+
+    void ListClients()
+    {
+        ServerMessage hi = new ServerMessage();
+        hi.Kind = ServerMessage.MessageKind.HELLO;
+        sc.server.SendMessage(hi);
     }
 
     void SearchForServerComp()
@@ -43,14 +55,41 @@ public class GameControl : MonoBehaviour
         sc.server.MessagesHandler = MessageReceived;
     }
 
-    public void MessageReceived(MessageClient message)
+    void Update()
     {
-        // **** Implement here response from clients ****
+        NewObsticleCheck();
+    }
+
+    void NewObsticleCheck()
+    {
+        if (isObsticleActive)
+            return;
+        timeSinceLastObsticle += Time.deltaTime;
+        if (timeSinceLastObsticle >= obsticleTimeout)
+        {
+            ActivateObsticle();
+        }
+    }
+
+    void ActivateObsticle()
+    {
+        isObsticleActive = true;
+        // sc.server.SendMessage();
+    }
+
+    public void MessageReceived(ClientMessage message)
+    {
+        Debug.Log("Message from " + message.ShortId);
+        if (message.Kind == ClientMessage.MessageKind.HELLO_RESPONSE)
+        {
+            Debug.Log("Hello response, logging");
+            clients.Add(message.Identifier);
+        }
     }
     public void NotifyClients()
     {
         // **** Implement here command to clients like this: ****
-        MessageServer command = new MessageServer("Do something");
+        ServerMessage command = new ServerMessage("Do something");
         sc.server.SendMessage(command);
     }
 

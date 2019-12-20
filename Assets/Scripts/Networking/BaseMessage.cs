@@ -3,21 +3,21 @@ using System.IO;
 using UnityEngine;
 
 [DataContract]
-public class MessageBase
+public class BaseMessage
 {
     private const short SHORT_LENGTH = 6;
-
+    
     [DataMember]
     public readonly string Identifier;
     [DataMember]
     public string Data;
 
-    public MessageBase()
+    public BaseMessage()
     {
         Identifier = SystemInfo.deviceUniqueIdentifier;
     }
 
-    public MessageBase(string data) : this()
+    public BaseMessage(string data) : this()
     {
         Data = data;
     }
@@ -31,8 +31,8 @@ public class MessageBase
             return Identifier.Substring(Identifier.Length - SHORT_LENGTH);
         }
     }
-    public static implicit operator MessageBase(string data)
+    public static implicit operator BaseMessage(string data)
     {
-        return new MessageBase(data);
+        return new BaseMessage(data);
     }
 }

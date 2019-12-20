@@ -23,7 +23,7 @@ public class LobbyManager : MonoBehaviour
         UpdateText();
     }
 
-    void ClientDiconnect(TCPBase<MessageServer, MessageClient> client)
+    void ClientDiconnect(TCPBase<ServerMessage, ClientMessage> client)
     {
         godsCount--;
         UpdateText();
