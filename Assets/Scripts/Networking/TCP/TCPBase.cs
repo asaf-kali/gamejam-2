@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading;
 using UnityEngine;
 
+using System.Runtime.Serialization;
+
 public class TCPBase<SEND, RCV>
 {
     public delegate void MessageReceivedEvent(RCV message);
@@ -66,9 +68,16 @@ public class TCPBase<SEND, RCV>
             Debug.Log("Incoming data at client " + id + " length is " + length);
             var data = new byte[length];
             Array.Copy(buffer, 0, data, 0, length);
-            RCV message = MessageConverter<RCV>.Instance.Desrialize(data);
-            if (MessagesHandler != null)
-                MessagesHandler(message);
+            try
+            {
+                RCV message = MessageConverter<RCV>.Instance.Desrialize(data);
+                if (MessagesHandler != null)
+                    MessagesHandler(message);
+            }
+            catch (SerializationException e)
+            {
+                Debug.LogError(e);
+            }
         }
         Debug.Log("Client " + id + " done reading");
         Dispose();

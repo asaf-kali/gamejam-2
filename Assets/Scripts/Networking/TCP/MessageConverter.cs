@@ -3,7 +3,7 @@ using System.Text;
 using System.Runtime.InteropServices;
 using System;
 using System.Runtime.Serialization.Json;
-
+using System.Runtime.Serialization;
 public class MessageConverter<T>
 {
     private static MessageConverter<T> _instance;

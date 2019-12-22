@@ -47,7 +47,7 @@ public class GameControl : MonoBehaviour
     {
         SearchForServerComp();
         ListClients();
-        CreateComamnds();
+        CreateCommands();
     }
 
     void ListClients()
@@ -158,7 +158,7 @@ public class GameControl : MonoBehaviour
             if (client.Current.Equals(sisyphus))
                 continue;
             if (!answer.MoveNext())
-                Debug.LogAssertion("Clients were longer then answers!");
+                Debug.LogAssertion("Clients were " + clients.Count + ", answers were " + correctAnswers.Count);
             answersDict[client.Current] = answer.Current;
         }
         return answersDict;
@@ -224,7 +224,7 @@ public class GameControl : MonoBehaviour
         // TODO...
     }
 
-    private void CreateComamnds()
+    private void CreateCommands()
     {
         allCommands = new ArrayList();
         allCommands.Add("אודיסיאה");
