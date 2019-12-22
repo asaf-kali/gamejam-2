@@ -17,7 +17,7 @@ public class ServerMessage : BaseMessage
     public MessageKind Kind;
 
     [DataMember]
-    public Dictionary<string,string> commandsDictionary;
+    public Dictionary<string, string> AnswersDict;
 
     public ServerMessage() : this(null)
     {
