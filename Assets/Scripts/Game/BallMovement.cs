@@ -11,6 +11,6 @@ public class BallMovement : MonoBehaviour
 
     void Update()
     {
-        transform.Rotate(new Vector3(1, 1, 45) * Time.deltaTime);
+        transform.Rotate(new Vector3(1, 1, 15) * Time.deltaTime);
     }
 }
