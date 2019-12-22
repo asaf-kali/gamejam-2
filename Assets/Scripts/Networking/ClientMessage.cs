@@ -10,10 +10,14 @@ public class ClientMessage : BaseMessage
         UNDEFINED,
         HELLO_RESPONSE,
         ANSWER,
+        SISYPHUS_CLICK
     }
 
     [DataMember]
     public MessageKind Kind;
+
+    [DataMember]
+    public string ChosenCommand;
 
     public ClientMessage() : this(null)
     {

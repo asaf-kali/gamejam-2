@@ -90,14 +90,13 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4415317943997610577}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0862ab1fd7c364044ae68ec01dadb7e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   moveDirection: {x: 0.3, y: -0.2}
   moveSpeed: 3
-  rigidbody: {fileID: 0}
 --- !u!50 &4032948379324959874
 Rigidbody2D:
   serializedVersion: 4

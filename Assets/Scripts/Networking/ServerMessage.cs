@@ -1,6 +1,7 @@
 using System.Runtime.Serialization;
 using System.IO;
 using UnityEngine;
+using System.Collections.Generic;
 
 [DataContract]
 public class ServerMessage : BaseMessage
@@ -14,6 +15,9 @@ public class ServerMessage : BaseMessage
 
     [DataMember]
     public MessageKind Kind;
+
+    [DataMember]
+    public Dictionary<string, string> AnswersDict;
 
     public ServerMessage() : this(null)
     {
