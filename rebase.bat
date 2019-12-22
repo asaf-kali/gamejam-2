@@ -1,11 +1,11 @@
 @echo off
 
-set BRANCHES=dalik yael asaf
+set BRANCHES=dalik yael master
 
 for %%b in (%BRANCHES%) do ( 
    git checkout %%b
    git pull
-   git rebase master
+   git rebase asaf
    git push
 )
 echo Done
