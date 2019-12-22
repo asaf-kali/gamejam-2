@@ -7,16 +7,15 @@ using System.Text;
 using System.Threading;
 using UnityEngine;
 
-public class Server<SERV, CLNT>
+public class Server<T>
 {
-    public delegate void NewClientEvent();
+    public delegate void ClientConnectedHandler();
 
     private Thread listeningThread;
     private TcpListener listener;
-    private LinkedList<ConnectionHandler<SERV, CLNT>> handlers = new LinkedList<ConnectionHandler<SERV, CLNT>>();
-    public NewClientEvent ClientsHandler = null;
-    public TCPBase<SERV, CLNT>.MessageReceivedEvent MessagesHandler = null;
-    public TCPBase<SERV, CLNT>.DiconnectedEvent DisconnectionHandler = null;
+    private LinkedList<ConnectionHandler<T>> handlers = new LinkedList<ConnectionHandler<T>>();
+    public TCPBase<T>.MessageRceiver messageReceiver = null;
+    public ClientConnectedHandler clientConnectedHandler = null;
 
     public void Listen()
     {
@@ -29,9 +28,9 @@ public class Server<SERV, CLNT>
             {
                 Debug.Log("Server is open to new connections...");
                 TcpClient client = listener.AcceptTcpClient();
-                if (ClientsHandler != null)
-                    ClientsHandler();
-                ConnectionHandler<SERV, CLNT> handler = new ConnectionHandler<SERV, CLNT>(client, MessageReceived, DisconnectHandler);
+                if (clientConnectedHandler != null)
+                    clientConnectedHandler();
+                ConnectionHandler<T> handler = new ConnectionHandler<T>(client, messageReceiver);
                 handlers.AddLast(handler);
                 handler.HandleAsync();
             }
@@ -49,48 +48,11 @@ public class Server<SERV, CLNT>
         listeningThread.Start();
     }
 
-    private void MessageReceived(CLNT message)
-    {
-        if (MessagesHandler != null)
-            MessagesHandler(message);
-    }
-    private void DisconnectHandler(TCPBase<SERV, CLNT> client)
-    {
-        if (DisconnectionHandler != null)
-            DisconnectionHandler(client);
-    }
-
-    public void SendMessage(SERV message)
+    public void SendMessage(T message)
     {
         foreach (var handler in handlers)
         {
-            try
-            {
-                handler.SendMessage(message);
-            }
-            catch (InvalidOperationException)
-            {
-
-            }
-        }
-        RemoveDisconnectedHandlers();
-    }
-
-    private void RemoveDisconnectedHandlers()
-    {
-        LinkedList<ConnectionHandler<SERV, CLNT>> diconnected = new LinkedList<ConnectionHandler<SERV, CLNT>>();
-        foreach (var handler in handlers)
-        {
-            if (!handler.IsConnected)
-                diconnected.AddLast(handler);
-        }
-        if (diconnected.Count > 0)
-        {
-            Debug.Log(diconnected.Count + " disconnected handlers found");
-            foreach (var handler in diconnected)
-            {
-                handlers.Remove(handler);
-            }
+            handler.SendMessage(message);
         }
     }
 

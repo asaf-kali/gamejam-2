@@ -6,13 +6,10 @@ using System.Text;
 using System.Threading;
 using UnityEngine;
 
-public class Client<SEND, RCV> : TCPBase<SEND, RCV>
+public class Client<T> : TCPBase<T>
 {
-    public delegate void OnConnectEvent();
-
     private string serverIp;
     private Thread listeningThread;
-    public OnConnectEvent ConnectionHandler;
 
     public Client(int id, string serverIp) : base(id)
     {
@@ -35,11 +32,9 @@ public class Client<SEND, RCV> : TCPBase<SEND, RCV>
             client = new TcpClient(serverIp, Constants.PORT);
             while (true)
             {
+                Debug.Log("Client opening stream...");
                 using (NetworkStream stream = client.GetStream())
                 {
-                    Debug.Log("Client connected to a stream");
-                    if (ConnectionHandler != null)
-                        ConnectionHandler();
                     ReadStream(stream);
                 }
             }

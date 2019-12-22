@@ -6,34 +6,31 @@ using System.Text;
 using System.Threading;
 using UnityEngine;
 
-public class TCPBase<SEND, RCV>
+public class TCPBase<T>
 {
-    public delegate void MessageReceivedEvent(RCV message);
-    public delegate void DiconnectedEvent(TCPBase<SEND, RCV> self);
+    public delegate void MessageRceiver(T message);
 
     protected int id;
     protected TcpClient client;
-    public MessageReceivedEvent MessagesHandler = null;
-    public DiconnectedEvent DiconnectionHandler = null;
+    public MessageRceiver messageReceiver = null;
 
     private Byte[] buffer = new Byte[Constants.BUFFER_SIZE];
 
-    public TCPBase(int id) : this(id, null, null, null)
+    public TCPBase(int id) : this(id, null, null)
     {
 
     }
 
-    public TCPBase(int id, TcpClient client, MessageReceivedEvent messageReceiver, DiconnectedEvent disconnectHandler)
+    public TCPBase(int id, TcpClient client, MessageRceiver messageReceiver)
     {
         this.id = id;
         this.client = client;
-        this.MessagesHandler = messageReceiver;
-        this.DiconnectionHandler = disconnectHandler;
+        this.messageReceiver = messageReceiver;
     }
 
-    public void SendMessage(SEND message)
+    public void SendMessage(T message)
     {
-        if (!IsConnected)
+        if (client == null)
         {
             return;
         }
@@ -42,7 +39,7 @@ public class TCPBase<SEND, RCV>
             NetworkStream stream = client.GetStream();
             if (stream.CanWrite)
             {
-                var data = MessageConverter<SEND>.Instance.Serialize(message);
+                var data = MessageConverter<T>.Instance.Serialize(message);
                 stream.Write(data, 0, data.Length);
                 Debug.Log("Client " + id + " sent message - should be received by partner");
             }
@@ -63,34 +60,26 @@ public class TCPBase<SEND, RCV>
         int length;
         while ((length = stream.Read(buffer, 0, buffer.Length)) != 0)
         {
-            Debug.Log("Incoming data at client " + id + " length is " + length);
+            Debug.Log("Incoming data at listener " + id + " length is " + length);
             var data = new byte[length];
             Array.Copy(buffer, 0, data, 0, length);
-            RCV message = MessageConverter<RCV>.Instance.Desrialize(data);
-            if (MessagesHandler != null)
-                MessagesHandler(message);
+            T message = MessageConverter<T>.Instance.Desrialize(data);
+            if (messageReceiver != null)
+            {
+                messageReceiver(message);
+            }
         }
         Debug.Log("Client " + id + " done reading");
-        Dispose();
     }
 
-    public bool IsConnected
+    public void Close()
     {
-        get
-        {
-            if (client == null)
-                return false;
-            return client.Connected;
-        }
+        client.Close();
     }
 
     public void Dispose()
     {
-        if (DiconnectionHandler != null)
-            DiconnectionHandler(this);
         if (client != null)
-        {
             client.Dispose();
-        }
     }
 }
