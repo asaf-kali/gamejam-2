@@ -2,16 +2,70 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using System;
+using TMPro;
+using UnityEngine.UI;
 
 public class GodController : MonoBehaviour
 {
-    private const int OPTIONS_NUM = 6;
+    public GameObject canvas;
+    public GameObject button;
+    public TextMeshProUGUI commanderCommand;
 
+    private const int OPTIONS_NUM = 6;
+    private HashSet<GameObject> buttons;
+
+    private string answer;
     private ClientComponent cc;
 
     void Start()
     {
         SearchForClientComp();
+        CreateButtons();
+    }
+
+    private void CreateButtons()
+    {
+        buttons = new HashSet<GameObject>();
+        int y = 550;
+        int index = 0;
+        for(int i = 0; i < OPTIONS_NUM; i++)
+        {
+            GameObject newButton = Instantiate(button) as GameObject;
+            newButton.GetComponent<Button>().onClick.AddListener(()=>ButtonClicked(newButton.GetComponentInChildren<TextMeshProUGUI>()));
+            newButton.transform.SetParent(canvas.transform, false);
+            Vector3 pos = newButton.transform.position;
+            pos.y = y;
+            pos.x = 600;
+            newButton.transform.position = pos;
+            newButton.GetComponentInChildren<TextMeshProUGUI>().text = "button" + index.ToString();
+            buttons.Add(newButton);
+            index++;
+            y -= 55;
+        }
+    }
+
+    private void ButtonClicked(TextMeshProUGUI buttonText)
+    {
+        answer = buttonText.text;
+        Debug.Log("CLICKED! answer = "+ answer);
+        disableButtons();
+        SendMessage();
+    }
+
+    private void SendMessage()
+    {
+        ClientMessage ans = new ClientMessage();
+        ans.Kind = ClientMessage.MessageKind.ANSWER;
+        ans.ChosenCommand = answer;
+        cc.client.SendMessage(ans);//todo add client id?
+    }
+
+    private void disableButtons()
+    {
+        HashSet<GameObject>.Enumerator enumerator = buttons.GetEnumerator();
+        while (enumerator.MoveNext())
+            enumerator.Current.GetComponent<Button>().interactable = false;
     }
 
     void SearchForClientComp()
@@ -29,12 +83,42 @@ public class GodController : MonoBehaviour
 
     private void DisplayAsCommander(HashSet<string> answers)
     {
+        commanderCommand.gameObject.SetActive(true);
+        hideButtons();
+        commanderCommand.text = string.Join(",", answers);
         Debug.Log("Commands to show are: " + string.Join(",", answers));
     }
 
+    
+
     private void DisplayAsGod(HashSet<string> commands)
     {
+        commanderCommand.gameObject.SetActive(false);
+        showButtons(commands);
         Debug.Log("Commands to show are: " + string.Join(",", commands));
+    }
+
+    private void showButtons(HashSet<string> commands)
+    {
+        HashSet<GameObject>.Enumerator buttonsEnumerator = buttons.GetEnumerator();
+        HashSet<string>.Enumerator commandsEnumerator = commands.GetEnumerator();
+
+
+        while (buttonsEnumerator.MoveNext() && commandsEnumerator.MoveNext())
+        {
+            GameObject currButton = buttonsEnumerator.Current;
+            currButton.SetActive(true);
+            currButton.GetComponent<Button>().interactable = true;
+            currButton.GetComponentInChildren<TextMeshProUGUI>().text = commandsEnumerator.Current;
+        }
+    }
+
+    private void hideButtons()
+    {
+        HashSet<GameObject>.Enumerator enumerator =  buttons.GetEnumerator();
+        while (enumerator.MoveNext())
+            enumerator.Current.SetActive(false);
+
     }
 
     private void DisplayOptions(string myAnswer, string[] allAnswers)
