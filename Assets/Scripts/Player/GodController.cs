@@ -47,7 +47,7 @@ public class GodController : MonoBehaviour
         foreach (var entry in message.AnswersDict)
         {
             Debug.Log(entry.Key + ": " + entry.Value);
-            if (entry.Key == SystemInfo.deviceUniqueIdentifier)
+            if (entry.Key == Constants.SessionID)
             {
                 DisplayOptions(entry.Value, message.AnswersDict.Values.ToArray());
             }

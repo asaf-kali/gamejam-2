@@ -1,12 +1,14 @@
 using System.Runtime.Serialization;
 using System.IO;
 using UnityEngine;
+using System;
+using UnityEngine.Analytics;
 
 [DataContract]
 public class BaseMessage
 {
     private const short SHORT_LENGTH = 6;
-    
+
     [DataMember]
     public readonly string Identifier;
     [DataMember]
@@ -14,7 +16,7 @@ public class BaseMessage
 
     public BaseMessage()
     {
-        Identifier = SystemInfo.deviceUniqueIdentifier;
+        Identifier = Constants.SessionID;
     }
 
     public BaseMessage(string data) : this()
