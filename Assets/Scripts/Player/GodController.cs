@@ -20,6 +20,7 @@ public class GodController : MonoBehaviour
 
     void Start()
     {
+        button.GetComponent<Button>().onClick.AddListener(ButtonClicked);
         SearchForClientComp();
         CreateButtons();
     }
@@ -27,30 +28,35 @@ public class GodController : MonoBehaviour
     private void CreateButtons()
     {
         buttons = new HashSet<GameObject>();
-        int y = 550;
+        int y = 750;
         int index = 0;
         for(int i = 0; i < OPTIONS_NUM; i++)
         {
             GameObject newButton = Instantiate(button) as GameObject;
-            newButton.GetComponent<Button>().onClick.AddListener(()=>ButtonClicked(newButton.GetComponentInChildren<TextMeshProUGUI>()));
+            //newButton.GetComponent<Button>().onClick.AddListener(()=>ButtonClicked(newButton.GetComponentInChildren<TextMeshProUGUI>()));
             newButton.transform.SetParent(canvas.transform, false);
             Vector3 pos = newButton.transform.position;
             pos.y = y;
-            pos.x = 600;
+            pos.x = 275;
             newButton.transform.position = pos;
             newButton.GetComponentInChildren<TextMeshProUGUI>().text = "button" + index.ToString();
             buttons.Add(newButton);
             index++;
-            y -= 55;
+            y -= 120;
         }
     }
 
-    private void ButtonClicked(TextMeshProUGUI buttonText)
+    //private void ButtonClicked(TextMeshProUGUI buttonText)
+    //{
+    //    answer = buttonText.text;
+    //    Debug.Log("CLICKED! answer = "+ answer);
+    //    disableButtons();
+    //    SendMessage();
+    //}
+
+        public void ButtonClicked()
     {
-        answer = buttonText.text;
-        Debug.Log("CLICKED! answer = "+ answer);
-        disableButtons();
-        SendMessage();
+        Debug.Log("clicked");
     }
 
     private void SendMessage()

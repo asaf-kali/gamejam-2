@@ -28,7 +28,7 @@ RectTransform:
   m_GameObject: {fileID: 4203722874681049888}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 3.1190827, y: 3.1190827, z: 3.1190827}
   m_Children:
   - {fileID: 3436156066012789184}
   m_Father: {fileID: 0}
@@ -36,7 +36,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 12, y: 221}
+  m_AnchoredPosition: {x: 1, y: 221}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1009933295738472280
@@ -117,7 +117,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 5743447321987447700}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 11500000, guid: 1effa284263e9f240b0699a06b0eba11, type: 3}
+        m_MethodName: set_name
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: GodController.ButtonClicked
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &8061159132812168625
 GameObject:
   m_ObjectHideFlags: 0
@@ -182,7 +193,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_text: Button
-  m_isRightToLeft: 0
+  m_isRightToLeft: 1
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
