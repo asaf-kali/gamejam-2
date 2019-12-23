@@ -7,8 +7,8 @@ public class LineController : MonoBehaviour
     public Vector2 moveDirection;
     public float moveSpeed;
 
-    private readonly float endY = -10f;
-    private readonly Vector3 startPoint = new Vector3(-19.4f, 10.1f, 0);
+    private readonly float endY = -18.72f;
+    private readonly Vector3 startPoint = new Vector3(-46.783f, 27.521f, 0);
 
     // Start is called before the first frame update
 
