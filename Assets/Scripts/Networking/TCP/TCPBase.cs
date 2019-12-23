@@ -46,7 +46,7 @@ public class TCPBase<SEND, RCV>
             {
                 var data = MessageConverter<SEND>.Instance.Serialize(message);
                 stream.Write(data, 0, data.Length);
-                Debug.Log("Client " + id + " sent message - should be received by partner");
+                // Debug.Log("Client " + id + " sent message - should be received by partner");
             }
         }
         catch (SocketException socketException)
@@ -65,7 +65,7 @@ public class TCPBase<SEND, RCV>
         int length;
         while ((length = stream.Read(buffer, 0, buffer.Length)) != 0)
         {
-            Debug.Log("Incoming data at client " + id + " length is " + length);
+            // Debug.Log("Incoming data at client " + id + " length is " + length);
             var data = new byte[length];
             Array.Copy(buffer, 0, data, 0, length);
             try

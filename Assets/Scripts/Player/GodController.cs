@@ -26,12 +26,32 @@ public class GodController : MonoBehaviour
         cc.client.MessagesHandler = MessageReceived;
     }
 
-    private void DisplayOptions(string correct, string[] allAnswers)
+
+    private void DisplayAsCommander(HashSet<string> answers)
     {
-        Debug.Log("My answer is: " + correct);
-        HashSet<string> commands = Commands.RandomCommands(OPTIONS_NUM - 1, allAnswers);
-        commands.Add(correct);
-        Debug.Log("All commands are: " + string.Join(",", commands));
+        Debug.Log("Commands to show are: " + string.Join(",", answers));
+    }
+
+    private void DisplayAsGod(HashSet<string> commands)
+    {
+        Debug.Log("Commands to show are: " + string.Join(",", commands));
+    }
+
+    private void DisplayOptions(string myAnswer, string[] allAnswers)
+    {
+        Debug.Log("My answer is: " + myAnswer);
+        if (myAnswer == Commands.COMMANDER)
+        {
+            HashSet<string> commands = new HashSet<string>(allAnswers);
+            commands.Remove(Commands.COMMANDER);
+            DisplayAsCommander(commands);
+        }
+        else
+        {
+            HashSet<string> commands = Commands.RandomCommands(OPTIONS_NUM - 1, allAnswers);
+            commands.Add(myAnswer);
+            DisplayAsGod(commands);
+        }
     }
 
     private void HandleHello(ServerMessage message)
@@ -46,7 +66,6 @@ public class GodController : MonoBehaviour
     {
         foreach (var entry in message.AnswersDict)
         {
-            Debug.Log(entry.Key + ": " + entry.Value);
             if (entry.Key == Constants.SessionID)
             {
                 DisplayOptions(entry.Value, message.AnswersDict.Values.ToArray());
@@ -56,8 +75,6 @@ public class GodController : MonoBehaviour
 
     void MessageReceived(ServerMessage message)
     {
-        Debug.Log("Message from server " + message.ShortId);
-        Debug.Log(message.Kind + ": " + message.Data);
         MainThreadDispatcher.Instance.Enqueue(() =>
         {
             if (message.Kind == ServerMessage.MessageKind.HELLO)
