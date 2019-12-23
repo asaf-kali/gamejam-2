@@ -9,10 +9,10 @@ public class GameControl : MonoBehaviour
     private const float TIME_FOR_OBSTICLE = 2f;
     private const int ZOOM_IN = 5;
     private const int ZOOM_OUT = 20;
-    private readonly Vector3 MOUNTAIN_TOP;  // TODO
-    private readonly Vector3 MOUNTAIN_BOTTOM;  //  TODO
+    private readonly Vector3 MOUNTAIN_TOP; // TODO
+    private readonly Vector3 MOUNTAIN_BOTTOM; //  TODO
 
-    public static GameControl instance;
+    public static GameControl instance; // Singletone
 
     public GameObject player;
     public GameObject ball;
@@ -21,12 +21,10 @@ public class GameControl : MonoBehaviour
 
     private ServerComponent sc;
     private HashSet<string> clients = new HashSet<string>();
-    private ArrayList allCommands;
     private int score = 0;
     private float timeSinceLastObsticle = 0f;
     private bool isObsticleActive = false;
     public bool gameOver { get; private set; }
-    private string sisyphus = "";
     private float timeLeftForObsticle;
     private Dictionary<string, string> correctAnswers;
     private Dictionary<string, string> receivedAnswers;
@@ -47,7 +45,6 @@ public class GameControl : MonoBehaviour
     {
         SearchForServerComp();
         ListClients();
-        CreateCommands();
     }
 
     void ListClients()
@@ -134,40 +131,40 @@ public class GameControl : MonoBehaviour
         }
     }
 
-    HashSet<string> RandomAnswers()
-    {
-        HashSet<string> answers = new HashSet<string>();
-        System.Random r = new System.Random();
-        while (answers.Count < clients.Count - 1)
-        {
-            int index = r.Next(allCommands.Count);
-            answers.Add((string)allCommands[index]);
-        }
-        return answers;
-    }
-
-    Dictionary<string, string> CreateAnswersDict()
+    Dictionary<string, string> CreateAnswersDict(string commander)
     {
         Dictionary<string, string> answersDict = new Dictionary<string, string>();
-        HashSet<string> correct = RandomAnswers();
+        HashSet<string> correct = Commands.RandomCommands(clients.Count - 1);
 
         HashSet<string>.Enumerator client = clients.GetEnumerator();
         HashSet<string>.Enumerator answer = correct.GetEnumerator();
+        string value;
         while (client.MoveNext())
         {
-            if (client.Current.Equals(sisyphus))
-                continue;
-            if (!answer.MoveNext())
-                Debug.LogAssertion("Clients were " + clients.Count + ", answers were " + correctAnswers.Count);
-            answersDict[client.Current] = answer.Current;
+            if (client.Current.Equals(commander))
+                value = Commands.COMMANDER;
+            else
+            {
+                if (!answer.MoveNext())
+                    Debug.LogAssertion("Clients were " + clients.Count + ", answers were " + correct.Count);
+                value = answer.Current;
+            }
+            answersDict[client.Current] = value;
         }
         return answersDict;
+    }
+
+    string PickCommander()
+    {
+        System.Random r = new System.Random();
+        return clients.ElementAt(r.Next(clients.Count));
     }
 
     void ActivateObsticle()
     {
         isObsticleActive = true;
-        correctAnswers = CreateAnswersDict();
+        string commnader = PickCommander();
+        correctAnswers = CreateAnswersDict(commnader);
         receivedAnswers = new Dictionary<string, string>();
         ServerMessage msg = new ServerMessage();
         msg.Kind = ServerMessage.MessageKind.NEW_OBSTICLE;
@@ -178,10 +175,6 @@ public class GameControl : MonoBehaviour
 
     private void HandleHello(ClientMessage message)
     {
-        // Selects which player is sisyphus
-        if (!Equals("", sisyphus))
-            sisyphus = message.Identifier;
-
         Debug.Log("Hello response, logging");
         clients.Add(message.Identifier);
     }
@@ -190,14 +183,13 @@ public class GameControl : MonoBehaviour
     {
         if (isObsticleActive)
         {
-            if (!message.Identifier.Equals(sisyphus))
-                receivedAnswers.Add(message.Identifier, message.ChosenCommand);
+            receivedAnswers.Add(message.Identifier, message.ChosenCommand);
         }
     }
 
     private void HandleSisyphus(ClientMessage message)
     {
-        // TODO
+        // Do not implement. No time for this.
     }
 
     public void MessageReceived(ClientMessage message)
@@ -222,15 +214,6 @@ public class GameControl : MonoBehaviour
         Debug.Log("Game over");
         gameOver = true;
         // TODO...
-    }
-
-    private void CreateCommands()
-    {
-        allCommands = new ArrayList();
-        allCommands.Add("אודיסיאה");
-        allCommands.Add("אוהמרוס");
-        // TODO...
-
     }
 
 }
