@@ -29,7 +29,7 @@ public class GameControl : MonoBehaviour
     public bool gameOver { get; private set; }
     private float timeLeftForObsticle;
     private Dictionary<string, string> correctAnswers;
-    private Dictionary<string, string> receivedAnswers;
+    private HashSet<string> receivedAnswers;
 
     void Awake()
     {
@@ -96,6 +96,7 @@ public class GameControl : MonoBehaviour
 
     private void GodsSucceeded()
     {
+        Debug.Log("Good job gods!");
         // TODO lighting
         lighting.SetActive(true);
 
@@ -119,7 +120,9 @@ public class GameControl : MonoBehaviour
 
     private bool CheckCorrectAnswers()
     {
-        return Enumerable.SequenceEqual(correctAnswers, receivedAnswers);
+        if (receivedAnswers == null || correctAnswers == null)
+            return false;
+        return receivedAnswers.SetEquals(correctAnswers.Values);
     }
 
     void NewObsticleCheck()
@@ -128,9 +131,7 @@ public class GameControl : MonoBehaviour
             return;
         timeSinceLastObsticle += Time.deltaTime;
         if (timeSinceLastObsticle >= obsticleTimeout)
-        {
             ActivateObsticle();
-        }
     }
 
     Dictionary<string, string> CreateAnswersDict(string commander)
@@ -166,7 +167,7 @@ public class GameControl : MonoBehaviour
         isObsticleActive = true;
         string commnader = PickCommander();
         correctAnswers = CreateAnswersDict(commnader);
-        receivedAnswers = new Dictionary<string, string>();
+        receivedAnswers = new HashSet<string>();
         ServerMessage msg = new ServerMessage();
         msg.Kind = ServerMessage.MessageKind.NEW_OBSTICLE;
         msg.AnswersDict = correctAnswers;
@@ -177,15 +178,18 @@ public class GameControl : MonoBehaviour
     private void HandleHello(ClientMessage message)
     {
         Debug.Log("Hello response, logging");
-        clients.Add(message.Identifier);
+        MainThreadDispatcher.Instance.Enqueue(() =>
+        {
+            // This has to be thread safe
+            clients.Add(message.Identifier);
+        });
     }
 
     private void HandleAnswer(ClientMessage message)
     {
+        Debug.Log(message.ShortId + ": " + message.ChosenCommand);
         if (isObsticleActive)
-        {
-            receivedAnswers.Add(message.Identifier, message.ChosenCommand);
-        }
+            receivedAnswers.Add(message.ChosenCommand);
     }
 
     private void HandleSisyphus(ClientMessage message)
@@ -195,7 +199,7 @@ public class GameControl : MonoBehaviour
 
     public void MessageReceived(ClientMessage message)
     {
-        Debug.Log("Message from " + message.ShortId);
+        // Debug.Log("Message from " + message.ShortId);
         if (message.Kind == ClientMessage.MessageKind.HELLO_RESPONSE)
             HandleHello(message);
         else if (message.Kind == ClientMessage.MessageKind.ANSWER)

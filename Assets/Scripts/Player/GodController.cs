@@ -14,6 +14,7 @@ public class GodController : MonoBehaviour
 
     private const int OPTIONS_NUM = 9;
     private const float BUTTON_Y_DIFF = 100;
+
     private HashSet<GameObject> buttons = new HashSet<GameObject>();
     private ClientComponent cc;
 
@@ -80,17 +81,16 @@ public class GodController : MonoBehaviour
         Debug.Log("Commands to show are: " + string.Join(",", answers));
     }
 
-    private void ShowButtons(HashSet<string> commands)
+    private void ShowCommands(HashSet<string> commands)
     {
-        HashSet<GameObject>.Enumerator buttonsEnumerator = buttons.GetEnumerator();
-        HashSet<string>.Enumerator commandsEnumerator = commands.GetEnumerator();
-
-        while (buttonsEnumerator.MoveNext() && commandsEnumerator.MoveNext())
+        IEnumerator<string> shuffled = commands.ToArray().OrderBy(x => UnityEngine.Random.value).GetEnumerator();
+        foreach (var button in buttons)
         {
-            GameObject currButton = buttonsEnumerator.Current;
-            currButton.SetActive(true);
-            currButton.GetComponent<Button>().interactable = true;
-            currButton.GetComponentInChildren<TextMeshProUGUI>().text = commandsEnumerator.Current;
+            if (!shuffled.MoveNext())
+                Debug.LogError("Shuffled set not big enough!");
+            button.SetActive(true);
+            button.GetComponent<Button>().interactable = true;
+            button.GetComponentInChildren<TextMeshProUGUI>().text = shuffled.Current;
         }
     }
 
@@ -103,7 +103,7 @@ public class GodController : MonoBehaviour
     private void DisplayAsGod(HashSet<string> commands)
     {
         commandsText.gameObject.SetActive(false);
-        ShowButtons(commands);
+        ShowCommands(commands);
         Debug.Log("Commands to show are: " + string.Join(",", commands));
     }
 
