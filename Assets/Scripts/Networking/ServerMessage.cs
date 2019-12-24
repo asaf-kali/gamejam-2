@@ -11,6 +11,7 @@ public class ServerMessage : BaseMessage
         UNDEFINED,
         HELLO,
         NEW_OBSTICLE,
+        CLEAR,
     }
 
     [DataMember]

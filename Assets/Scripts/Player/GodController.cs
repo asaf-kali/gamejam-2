@@ -142,6 +142,12 @@ public class GodController : MonoBehaviour
             }
     }
 
+    private void HandleClear(ServerMessage message)
+    {
+        HideButtons();
+        commandsText.gameObject.SetActive(false);
+    }
+
     void MessageReceived(ServerMessage message)
     {
         MainThreadDispatcher.Instance.Enqueue(() =>
@@ -150,6 +156,8 @@ public class GodController : MonoBehaviour
                 HandleHello(message);
             else if (message.Kind == ServerMessage.MessageKind.NEW_OBSTICLE)
                 HandleNewObsticle(message);
+            else if (message.Kind == ServerMessage.MessageKind.CLEAR)
+                HandleClear(message);
         });
     }
 

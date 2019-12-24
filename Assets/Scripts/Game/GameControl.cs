@@ -7,8 +7,8 @@ using System.Linq;
 public class GameControl : MonoBehaviour
 {
     private const float TIME_FOR_OBSTICLE = 3f;
-    private const int ZOOM_IN = 5;
-    private const int ZOOM_OUT = 20;
+    private const float ZOOM_IN = 5;
+    private const float ZOOM_OUT = 8.5f;
     private readonly Vector3 MOUNTAIN_TOP; // TODO
     private readonly Vector3 MOUNTAIN_BOTTOM; //  TODO
 
@@ -19,7 +19,7 @@ public class GameControl : MonoBehaviour
     public GameObject player;
     public GameObject ball;
     public int obsticleTimeout;
-    public GameObject lighting;
+    public GameObject lightning;
 
     private ServerComponent sc;
     private HashSet<string> clients = new HashSet<string>();
@@ -92,23 +92,18 @@ public class GameControl : MonoBehaviour
             GameOver();
     }
 
-    private void GodsSucceeded()
+    private IEnumerator GodsSucceeded()
     {
         Debug.Log("Good job gods!");
         DeactivateObsticle();
-        // TODO lighting
-        // lighting.SetActive(true);
-
-        // Zoom out
+        lightning.SetActive(true);
         Camera.main.orthographicSize = ZOOM_OUT;
 
-        // TODO wait a few seconds
-        // TODO move sisyphus back
-        MoveSisyphusDown();
+        yield return new WaitForSeconds(3);
 
-        // Zoom in
+        lightning.SetActive(false);
+        MoveSisyphusDown();
         Camera.main.orthographicSize = ZOOM_IN;
-        // lighting.SetActive(false);
     }
 
     private void MoveSisyphusDown()
@@ -178,6 +173,9 @@ public class GameControl : MonoBehaviour
     {
         isObsticleActive = false;
         timeSinceLastObsticle = 0;
+        var msg = new ServerMessage();
+        msg.Kind = ServerMessage.MessageKind.CLEAR;
+        sc.server.SendMessage(msg);
     }
 
     private void HandleHello(ClientMessage message)
@@ -199,7 +197,7 @@ public class GameControl : MonoBehaviour
                 return;
             receivedAnswers.Add(message.ChosenCommand);
             if (CheckCorrectAnswers())
-                GodsSucceeded();
+                StartCoroutine(GodsSucceeded());
         });
 
     }
