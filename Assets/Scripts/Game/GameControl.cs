@@ -12,7 +12,9 @@ public class GameControl : MonoBehaviour
     private readonly Vector3 MOUNTAIN_TOP; // TODO
     private readonly Vector3 MOUNTAIN_BOTTOM; //  TODO
 
-    public static GameControl instance; // Singletone
+    // Singletone
+    public static GameControl instance;
+    private static System.Random r = new System.Random();
 
     public GameObject player;
     public GameObject ball;
@@ -156,7 +158,6 @@ public class GameControl : MonoBehaviour
 
     string PickCommander()
     {
-        System.Random r = new System.Random();
         return clients.ElementAt(r.Next(clients.Count));
     }
 

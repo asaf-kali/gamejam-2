@@ -9,69 +9,55 @@ using UnityEngine.UI;
 public class GodController : MonoBehaviour
 {
     public GameObject canvas;
-    public GameObject button;
-    public TextMeshProUGUI commanderCommand;
+    public GameObject buttonBase;
+    public TextMeshProUGUI commandsText;
 
-    private const int OPTIONS_NUM = 6;
-    private HashSet<GameObject> buttons;
-
-    private string answer;
+    private const int OPTIONS_NUM = 9;
+    private const float BUTTON_Y_DIFF = 100;
+    private HashSet<GameObject> buttons = new HashSet<GameObject>();
     private ClientComponent cc;
 
     void Start()
     {
-        button.GetComponent<Button>().onClick.AddListener(ButtonClicked);
         SearchForClientComp();
         CreateButtons();
     }
 
     private void CreateButtons()
     {
-        buttons = new HashSet<GameObject>();
-        int y = 750;
-        int index = 0;
-        for(int i = 0; i < OPTIONS_NUM; i++)
+        for (int i = 0; i < OPTIONS_NUM; i++)
         {
-            GameObject newButton = Instantiate(button) as GameObject;
-            //newButton.GetComponent<Button>().onClick.AddListener(()=>ButtonClicked(newButton.GetComponentInChildren<TextMeshProUGUI>()));
-            newButton.transform.SetParent(canvas.transform, false);
-            Vector3 pos = newButton.transform.position;
-            pos.y = y;
-            pos.x = 275;
-            newButton.transform.position = pos;
-            newButton.GetComponentInChildren<TextMeshProUGUI>().text = "button" + index.ToString();
-            buttons.Add(newButton);
-            index++;
-            y -= 120;
+            GameObject clone = Instantiate(buttonBase) as GameObject;
+            clone.transform.SetParent(canvas.transform, false);
+            Vector3 newPos = clone.transform.position;
+            newPos.y -= i * BUTTON_Y_DIFF;
+            clone.transform.position = newPos;
+            clone.GetComponentInChildren<TextMeshProUGUI>().text = "";
+            clone.GetComponent<Button>().onClick.AddListener(() => { ButtonClicked(clone); });
+            buttons.Add(clone);
         }
     }
 
-    //private void ButtonClicked(TextMeshProUGUI buttonText)
-    //{
-    //    answer = buttonText.text;
-    //    Debug.Log("CLICKED! answer = "+ answer);
-    //    disableButtons();
-    //    SendMessage();
-    //}
-
-        public void ButtonClicked()
+    public void ButtonClicked(GameObject button)
     {
-        Debug.Log("clicked");
+        String command = button.GetComponentInChildren<TextMeshProUGUI>().text;
+        Debug.Log("CLICKED! Answer is: " + command);
+        DisableButtons();
+        SendAnswer(command);
     }
 
-    private void SendMessage()
+    private void SendAnswer(string command)
     {
-        ClientMessage ans = new ClientMessage();
-        ans.Kind = ClientMessage.MessageKind.ANSWER;
-        ans.ChosenCommand = answer;
-        cc.client.SendMessage(ans);//todo add client id?
+        ClientMessage msg = new ClientMessage();
+        msg.Kind = ClientMessage.MessageKind.ANSWER;
+        msg.ChosenCommand = command;
+        cc.client.SendMessage(msg);
     }
 
-    private void disableButtons()
+    private void DisableButtons()
     {
-        HashSet<GameObject>.Enumerator enumerator = buttons.GetEnumerator();
-        while (enumerator.MoveNext())
-            enumerator.Current.GetComponent<Button>().interactable = false;
+        foreach (var button in buttons)
+            button.GetComponent<Button>().interactable = false;
     }
 
     void SearchForClientComp()
@@ -86,29 +72,18 @@ public class GodController : MonoBehaviour
         cc.client.MessagesHandler = MessageReceived;
     }
 
-
     private void DisplayAsCommander(HashSet<string> answers)
     {
-        commanderCommand.gameObject.SetActive(true);
-        hideButtons();
-        commanderCommand.text = string.Join(",", answers);
+        HideButtons();
+        commandsText.text = string.Join("\n", answers);
+        commandsText.gameObject.SetActive(true);
         Debug.Log("Commands to show are: " + string.Join(",", answers));
     }
 
-    
-
-    private void DisplayAsGod(HashSet<string> commands)
-    {
-        commanderCommand.gameObject.SetActive(false);
-        showButtons(commands);
-        Debug.Log("Commands to show are: " + string.Join(",", commands));
-    }
-
-    private void showButtons(HashSet<string> commands)
+    private void ShowButtons(HashSet<string> commands)
     {
         HashSet<GameObject>.Enumerator buttonsEnumerator = buttons.GetEnumerator();
         HashSet<string>.Enumerator commandsEnumerator = commands.GetEnumerator();
-
 
         while (buttonsEnumerator.MoveNext() && commandsEnumerator.MoveNext())
         {
@@ -119,12 +94,17 @@ public class GodController : MonoBehaviour
         }
     }
 
-    private void hideButtons()
+    private void HideButtons()
     {
-        HashSet<GameObject>.Enumerator enumerator =  buttons.GetEnumerator();
-        while (enumerator.MoveNext())
-            enumerator.Current.SetActive(false);
+        foreach (var button in buttons)
+            button.SetActive(false);
+    }
 
+    private void DisplayAsGod(HashSet<string> commands)
+    {
+        commandsText.gameObject.SetActive(false);
+        ShowButtons(commands);
+        Debug.Log("Commands to show are: " + string.Join(",", commands));
     }
 
     private void DisplayOptions(string myAnswer, string[] allAnswers)
@@ -155,12 +135,11 @@ public class GodController : MonoBehaviour
     private void HandleNewObsticle(ServerMessage message)
     {
         foreach (var entry in message.AnswersDict)
-        {
             if (entry.Key == Constants.SessionID)
             {
                 DisplayOptions(entry.Value, message.AnswersDict.Values.ToArray());
+                break;
             }
-        }
     }
 
     void MessageReceived(ServerMessage message)
