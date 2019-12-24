@@ -3,29 +3,45 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 using System.Linq;
+using TMPro;
 
 public class GameControl : MonoBehaviour
 {
-    private const float TIME_FOR_OBSTICLE = 3f;
-    private const float ZOOM_IN = 5;
-    private const float ZOOM_OUT = 8.5f;
-    private readonly Vector3 MOUNTAIN_TOP; // TODO
-    private readonly Vector3 MOUNTAIN_BOTTOM; //  TODO
+
+    enum Players
+    {
+        Sisyphus,
+        Gods
+    }
+
+    private const float TIME_FOR_OBSTICLE = 5f;
+    private const int NUMBER_OF_REQUIRED_HITS = 3;
+    public const int LINT_ITER_NUMER = 1;
+    private const int GAME_TIMEOUT = 50;
 
     // Singletone
     public static GameControl instance;
+
     private static System.Random r = new System.Random();
+    public int iterationsCount = 0;
+    public bool lastIteration = false;
 
     public GameObject player;
     public GameObject ball;
+    public Transform ballPosition;
     public int obsticleTimeout;
     public GameObject lightning;
+    public TextMeshProUGUI obsticleTimer;
+    public TextMeshProUGUI gameTimer;
+    public TextMeshProUGUI hitsNumber;
 
     private ServerComponent sc;
     private HashSet<string> clients = new HashSet<string>();
-    private int score = 0;
-    private float timeSinceLastObsticle = 0f;
+    private int godScore = 0;
+    private float timeSinceLastObsticle = 0;
+    private float gameTime = 0;
     private bool isObsticleActive = false;
+    private bool isObsticleHitting = false;
     public bool gameOver { get; private set; }
     private float timeLeftForObsticle = TIME_FOR_OBSTICLE;
     private Dictionary<string, string> correctAnswers;
@@ -73,12 +89,27 @@ public class GameControl : MonoBehaviour
         if (!isObsticleActive)
             return;
         timeLeftForObsticle -= Time.deltaTime;
+        obsticleTimer.text = ((int)timeLeftForObsticle).ToString();
         if (timeLeftForObsticle <= 0)
             DeactivateObsticle();
     }
 
+    int TimeLeft()
+    {
+        return (int)(GAME_TIMEOUT - gameTime);
+    }
+
+    void UpdateTime()
+    {
+        gameTime += Time.deltaTime;
+        gameTimer.text = TimeLeft().ToString();
+    }
+
     void Update()
     {
+        if (gameOver)
+            return;
+        UpdateTime();
         WinnerCheck();
         NewObsticleCheck();
         CurrentObsticleCheck();
@@ -86,29 +117,50 @@ public class GameControl : MonoBehaviour
 
     private void WinnerCheck()
     {
-        if (player.transform.position == MOUNTAIN_TOP)  // TODO: Replace == with .distance() < some_distance
-            GameOver();
-        if (player.transform.position == MOUNTAIN_BOTTOM)
-            GameOver();
+        if (godScore == 3)
+            GameOver(Players.Gods);
+        else if (gameTime >= GAME_TIMEOUT)
+            GameOver(Players.Sisyphus);
     }
 
     private IEnumerator GodsSucceeded()
     {
-        Debug.Log("Good job gods!");
+        Debug.Log("Gods hit!");
+        AddHit();
         DeactivateObsticle();
+        isObsticleHitting = true;
         lightning.SetActive(true);
-        Camera.main.orthographicSize = ZOOM_OUT;
+        yield return new WaitForSeconds(1);
 
-        yield return new WaitForSeconds(3);
-
-        lightning.SetActive(false);
         MoveSisyphusDown();
-        Camera.main.orthographicSize = ZOOM_IN;
+        yield return new WaitForSeconds(2);
+
+        isObsticleHitting = false;
+        lightning.SetActive(false);
     }
 
+    private void AddHit()
+    {
+        godScore++;
+        hitsNumber.text = godScore.ToString() + "/" + NUMBER_OF_REQUIRED_HITS.ToString();
+        WinnerCheck();
+    }
     private void MoveSisyphusDown()
     {
         // TODO
+    }
+
+    private void SisyphusWins()
+    {
+        player.GetComponent<Rigidbody2D>().velocity = new Vector2(-3, 1) * 1.5f;
+    }
+
+    private void SisyphusDies()
+    {
+        player.GetComponent<PolygonCollider2D>().enabled = false;
+        player.GetComponent<SpriteRenderer>().sortingOrder = 2;
+        player.GetComponent<Rigidbody2D>().velocity += new Vector2(0, -8);
+        player.GetComponent<Rigidbody2D>().angularVelocity = 150;
     }
 
     private bool CheckCorrectAnswers()
@@ -120,7 +172,7 @@ public class GameControl : MonoBehaviour
 
     void NewObsticleCheck()
     {
-        if (isObsticleActive)
+        if (isObsticleActive || isObsticleHitting)
             return;
         timeSinceLastObsticle += Time.deltaTime;
         if (timeSinceLastObsticle >= obsticleTimeout)
@@ -158,6 +210,7 @@ public class GameControl : MonoBehaviour
     void ActivateObsticle()
     {
         isObsticleActive = true;
+
         string commnader = PickCommander();
         correctAnswers = CreateAnswersDict(commnader);
         receivedAnswers = new HashSet<string>();
@@ -167,11 +220,19 @@ public class GameControl : MonoBehaviour
         msg.AnswersDict = correctAnswers;
         sc.server.SendMessage(msg);
         timeLeftForObsticle = TIME_FOR_OBSTICLE;
+        ActivateObsticleTimer();
+    }
+
+    private void ActivateObsticleTimer()
+    {
+        obsticleTimer.gameObject.SetActive(true);
+        obsticleTimer.text = ((int)timeLeftForObsticle).ToString();
     }
 
     void DeactivateObsticle()
     {
         isObsticleActive = false;
+        obsticleTimer.gameObject.SetActive(false);
         timeSinceLastObsticle = 0;
         var msg = new ServerMessage();
         msg.Kind = ServerMessage.MessageKind.CLEAR;
@@ -224,9 +285,12 @@ public class GameControl : MonoBehaviour
         ball.GetComponent<Rigidbody2D>().velocity += new Vector2(-5f, 5f);
     }
 
-    public void GameOver()
+    private void GameOver(Players winner)
     {
-        Debug.Log("Game over");
+        Debug.Log("Game over! The winner is: " + winner);
+        if (winner == Players.Sisyphus)
+            SisyphusWins();
+        else SisyphusDies();
         gameOver = true;
         // TODO...
     }
