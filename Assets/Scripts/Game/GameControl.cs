@@ -40,7 +40,7 @@ public class GameControl : MonoBehaviour
     private float timeSinceLastObsticle = 0;
     private float gameTime = 0;
     private bool isObsticleActive = false;
-    private bool isObsticleHitting = false;
+    public static bool isObsticleHitting = false;
     public bool gameOver { get; private set; }
     private float timeLeftForObsticle = TIME_FOR_OBSTICLE;
     private Dictionary<string, string> correctAnswers;
@@ -62,6 +62,7 @@ public class GameControl : MonoBehaviour
     {
         SearchForServerComp();
         ListClients();
+        
     }
 
     void ListClients()
@@ -146,7 +147,7 @@ public class GameControl : MonoBehaviour
     }
     private void MoveSisyphusDown()
     {
-        // TODO
+        
     }
 
     private void SisyphusWins()
