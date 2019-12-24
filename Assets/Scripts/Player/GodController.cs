@@ -29,6 +29,7 @@ public class GodController : MonoBehaviour
         for (int i = 0; i < OPTIONS_NUM; i++)
         {
             GameObject clone = Instantiate(buttonBase) as GameObject;
+            clone.SetActive(false);
             clone.transform.SetParent(canvas.transform, false);
             Vector3 newPos = clone.transform.position;
             newPos.y -= i * BUTTON_Y_DIFF;
