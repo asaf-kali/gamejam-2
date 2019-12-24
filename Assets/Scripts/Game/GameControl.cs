@@ -209,6 +209,8 @@ public class GameControl : MonoBehaviour
 
     void ActivateObsticle()
     {
+        if (clients.Count < 2)
+            return;
         isObsticleActive = true;
 
         string commnader = PickCommander();
