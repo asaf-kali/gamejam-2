@@ -17,6 +17,8 @@ public class LineController : MonoBehaviour
 
     void Update()
     {
+        if (GameControl.isObsticleHitting)
+            return;
         transform.Translate(moveDirection * Time.deltaTime * moveSpeed);
         if (transform.localPosition.y <= endY)
             transform.localPosition = startPoint;
