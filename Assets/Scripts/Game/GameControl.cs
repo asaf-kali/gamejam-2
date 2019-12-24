@@ -6,7 +6,7 @@ using System.Linq;
 
 public class GameControl : MonoBehaviour
 {
-    private const float TIME_FOR_OBSTICLE = 2f;
+    private const float TIME_FOR_OBSTICLE = 3f;
     private const int ZOOM_IN = 5;
     private const int ZOOM_OUT = 20;
     private readonly Vector3 MOUNTAIN_TOP; // TODO
@@ -27,7 +27,7 @@ public class GameControl : MonoBehaviour
     private float timeSinceLastObsticle = 0f;
     private bool isObsticleActive = false;
     public bool gameOver { get; private set; }
-    private float timeLeftForObsticle;
+    private float timeLeftForObsticle = TIME_FOR_OBSTICLE;
     private Dictionary<string, string> correctAnswers;
     private HashSet<string> receivedAnswers;
 
@@ -68,25 +68,23 @@ public class GameControl : MonoBehaviour
         sc.server.MessagesHandler = MessageReceived;
     }
 
-    void Update()
+    void CurrentObsticleCheck()
     {
-        CheckWinner();
-        if (isObsticleActive)
-        {
-            bool success = CheckCorrectAnswers();
-            timeLeftForObsticle -= Time.deltaTime;
-            if (success || timeLeftForObsticle <= 0)
-            {
-                isObsticleActive = false;
-                timeSinceLastObsticle = 0;
-                if (success)
-                    GodsSucceeded();
-            }
-        }
-        NewObsticleCheck();
+        if (!isObsticleActive)
+            return;
+        timeLeftForObsticle -= Time.deltaTime;
+        if (timeLeftForObsticle <= 0)
+            DeactivateObsticle();
     }
 
-    private void CheckWinner()
+    void Update()
+    {
+        WinnerCheck();
+        NewObsticleCheck();
+        CurrentObsticleCheck();
+    }
+
+    private void WinnerCheck()
     {
         if (player.transform.position == MOUNTAIN_TOP)  // TODO: Replace == with .distance() < some_distance
             GameOver();
@@ -97,8 +95,9 @@ public class GameControl : MonoBehaviour
     private void GodsSucceeded()
     {
         Debug.Log("Good job gods!");
+        DeactivateObsticle();
         // TODO lighting
-        lighting.SetActive(true);
+        // lighting.SetActive(true);
 
         // Zoom out
         Camera.main.orthographicSize = ZOOM_OUT;
@@ -109,8 +108,7 @@ public class GameControl : MonoBehaviour
 
         // Zoom in
         Camera.main.orthographicSize = ZOOM_IN;
-        lighting.SetActive(false);
-
+        // lighting.SetActive(false);
     }
 
     private void MoveSisyphusDown()
@@ -168,11 +166,18 @@ public class GameControl : MonoBehaviour
         string commnader = PickCommander();
         correctAnswers = CreateAnswersDict(commnader);
         receivedAnswers = new HashSet<string>();
+        receivedAnswers.Add(Commands.COMMANDER); // Ugly but needed
         ServerMessage msg = new ServerMessage();
         msg.Kind = ServerMessage.MessageKind.NEW_OBSTICLE;
         msg.AnswersDict = correctAnswers;
         sc.server.SendMessage(msg);
         timeLeftForObsticle = TIME_FOR_OBSTICLE;
+    }
+
+    void DeactivateObsticle()
+    {
+        isObsticleActive = false;
+        timeSinceLastObsticle = 0;
     }
 
     private void HandleHello(ClientMessage message)
@@ -188,8 +193,15 @@ public class GameControl : MonoBehaviour
     private void HandleAnswer(ClientMessage message)
     {
         Debug.Log(message.ShortId + ": " + message.ChosenCommand);
-        if (isObsticleActive)
+        MainThreadDispatcher.Instance.Enqueue(() =>
+        {
+            if (!isObsticleActive)
+                return;
             receivedAnswers.Add(message.ChosenCommand);
+            if (CheckCorrectAnswers())
+                GodsSucceeded();
+        });
+
     }
 
     private void HandleSisyphus(ClientMessage message)
