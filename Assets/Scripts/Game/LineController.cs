@@ -15,17 +15,24 @@ public class LineController : MonoBehaviour
     void Start()
     {
         // var v = Camera.main.camera.orthographicSize;
-
         Debug.Log(tag + " y pos = " + transform.localPosition.y.ToString() + "x pos = " + transform.position.x.ToString());
 
     }
     
     void Update()
     {
-        if (transform.localPosition.y <= endY)
-            transform.localPosition = startPoint;
+        if (GameControl.iterations < GameControl.numberOfLineIterations)
+        {
+            if (transform.localPosition.y <= endY)
+            {
+                transform.localPosition = startPoint;
+                GameControl.iterations+=1;
+            }
+            else
+                transform.Translate(moveDirection * Time.deltaTime * moveSpeed);
+        }
         else
-            transform.Translate(moveDirection * Time.deltaTime * moveSpeed);
+            GameControl.lastIteration = true;
     }
 
     private void FixedUpdate()
