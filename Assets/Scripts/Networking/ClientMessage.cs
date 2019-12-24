@@ -7,10 +7,9 @@ public class ClientMessage : BaseMessage
 {
     public enum MessageKind
     {
-        UNDEFINED,
-        HELLO_RESPONSE,
-        ANSWER,
-        SISYPHUS_CLICK
+        HelloResponse,
+        Answer,
+        SisyphusClick
     }
 
     [DataMember]

@@ -9,7 +9,7 @@ using UnityEngine;
 
 public class ServerComponent : MonoBehaviour
 {
-    private AsyncSceneLoader loader;
+    public AsyncSceneLoader loader;
     public Server<ServerMessage, ClientMessage> server;
     private bool initCalled = false;
 
@@ -41,11 +41,6 @@ public class ServerComponent : MonoBehaviour
                 GameControl.instance.PushBall();
             }
         });
-    }
-
-    public void MoveToGame()
-    {
-        loader.LoadNext();
     }
 
     void Update()

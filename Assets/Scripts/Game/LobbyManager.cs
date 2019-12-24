@@ -46,6 +46,6 @@ public class LobbyManager : MonoBehaviour
 
     public void StartClicked()
     {
-        server.MoveToGame();
+        server.loader.LoadNext();
     }
 }

@@ -9,6 +9,11 @@ public class AsyncSceneLoader : MonoBehaviour
 
     public void LoadNext()
     {
+        Load(nextScene);
+    }
+
+    public void Load(string sceneName)
+    {
         MainThreadDispatcher.Instance.Enqueue(() =>
         {
             StartCoroutine(LoadNextScene());

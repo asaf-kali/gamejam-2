@@ -18,6 +18,7 @@ public class GodController : MonoBehaviour
 
     private HashSet<GameObject> buttons = new HashSet<GameObject>();
     private ClientComponent cc;
+    private bool gameOver = false;
 
     void Start()
     {
@@ -52,7 +53,7 @@ public class GodController : MonoBehaviour
     private void SendAnswer(string command)
     {
         ClientMessage msg = new ClientMessage();
-        msg.Kind = ClientMessage.MessageKind.ANSWER;
+        msg.Kind = ClientMessage.MessageKind.Answer;
         msg.ChosenCommand = command;
         cc.client.SendMessage(msg);
     }
@@ -129,17 +130,26 @@ public class GodController : MonoBehaviour
         }
     }
 
+    void Clear()
+    {
+        HideButtons();
+        commandsText.gameObject.SetActive(false);
+        guidance.gameObject.SetActive(false);
+    }
+
     private void HandleHello(ServerMessage message)
     {
         Debug.Log("Hello message, responding");
         ClientMessage msg = new ClientMessage("Hi!");
-        msg.Kind = ClientMessage.MessageKind.HELLO_RESPONSE;
+        msg.Kind = ClientMessage.MessageKind.HelloResponse;
         cc.client.SendMessage(msg);
         guidance.text = "המשחק החל!";
     }
 
     private void HandleNewObsticle(ServerMessage message)
     {
+        if (gameOver)
+            return;
         foreach (var entry in message.AnswersDict)
             if (entry.Key == Constants.SessionID)
             {
@@ -150,21 +160,33 @@ public class GodController : MonoBehaviour
 
     private void HandleClear(ServerMessage message)
     {
-        HideButtons();
-        commandsText.gameObject.SetActive(false);
-        guidance.gameObject.SetActive(false);
+        if (gameOver)
+            return;
+        Clear();
+    }
+    private void HandleGameOver(ServerMessage message)
+    {
+        Debug.Log("Game over, winner is " + message.Winner);
+        Clear();
+        gameOver = true;
+        if (message.Winner == GameControl.Players.Gods)
+            guidance.text = "ניצחנו!";
+        else guidance.text = "הפדנו!";
+        guidance.gameObject.SetActive(true);
     }
 
     void MessageReceived(ServerMessage message)
     {
         MainThreadDispatcher.Instance.Enqueue(() =>
         {
-            if (message.Kind == ServerMessage.MessageKind.HELLO)
+            if (message.Kind == ServerMessage.MessageKind.Hello)
                 HandleHello(message);
-            else if (message.Kind == ServerMessage.MessageKind.NEW_OBSTICLE)
+            else if (message.Kind == ServerMessage.MessageKind.NewObsticle)
                 HandleNewObsticle(message);
-            else if (message.Kind == ServerMessage.MessageKind.CLEAR)
+            else if (message.Kind == ServerMessage.MessageKind.Clear)
                 HandleClear(message);
+            else if (message.Kind == ServerMessage.MessageKind.GameOver)
+                HandleGameOver(message);
         });
     }
 

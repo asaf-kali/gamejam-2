@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Collections;
 using System.Collections.Generic;
 using System;
@@ -8,13 +9,14 @@ using TMPro;
 public class GameControl : MonoBehaviour
 {
 
-    enum Players
+    public enum Players
     {
         Sisyphus,
         Gods
     }
 
     private const float TIME_FOR_OBSTICLE = 5f;
+    private const float TIME_BETWEEN_OBSTICLES = 1.5f;
     private const int NUMBER_OF_REQUIRED_HITS = 3;
     public const int LINT_ITER_NUMER = 1;
     private const int GAME_TIMEOUT = 50;
@@ -27,7 +29,6 @@ public class GameControl : MonoBehaviour
     public GameObject player;
     public GameObject ball;
     public Transform ballPosition;
-    public int obsticleTimeout;
     public GameObject lightning;
     public TextMeshProUGUI obsticleTimer;
     public TextMeshProUGUI gameTimer;
@@ -66,7 +67,7 @@ public class GameControl : MonoBehaviour
     void ListClients()
     {
         ServerMessage hi = new ServerMessage();
-        hi.Kind = ServerMessage.MessageKind.HELLO;
+        hi.Kind = ServerMessage.MessageKind.Hello;
         sc.server.SendMessage(hi);
     }
 
@@ -131,7 +132,7 @@ public class GameControl : MonoBehaviour
         yield return new WaitForSeconds(1);
 
         MoveSisyphusDown();
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(2.5f);
 
         isObsticleHitting = false;
         lightning.SetActive(false);
@@ -170,10 +171,12 @@ public class GameControl : MonoBehaviour
 
     void NewObsticleCheck()
     {
-        if (isObsticleActive || isObsticleHitting)
+        if (isObsticleActive)
             return;
         timeSinceLastObsticle += Time.deltaTime;
-        if (timeSinceLastObsticle >= obsticleTimeout)
+        if (isObsticleHitting)
+            return;
+        if (timeSinceLastObsticle >= TIME_BETWEEN_OBSTICLES)
             ActivateObsticle();
     }
 
@@ -216,7 +219,7 @@ public class GameControl : MonoBehaviour
         receivedAnswers = new HashSet<string>();
         receivedAnswers.Add(Commands.COMMANDER); // Ugly but needed
         ServerMessage msg = new ServerMessage();
-        msg.Kind = ServerMessage.MessageKind.NEW_OBSTICLE;
+        msg.Kind = ServerMessage.MessageKind.NewObsticle;
         msg.AnswersDict = correctAnswers;
         sc.server.SendMessage(msg);
         timeLeftForObsticle = TIME_FOR_OBSTICLE;
@@ -235,7 +238,7 @@ public class GameControl : MonoBehaviour
         obsticleTimer.gameObject.SetActive(false);
         timeSinceLastObsticle = 0;
         var msg = new ServerMessage();
-        msg.Kind = ServerMessage.MessageKind.CLEAR;
+        msg.Kind = ServerMessage.MessageKind.Clear;
         sc.server.SendMessage(msg);
     }
 
@@ -271,11 +274,11 @@ public class GameControl : MonoBehaviour
     public void MessageReceived(ClientMessage message)
     {
         // Debug.Log("Message from " + message.ShortId);
-        if (message.Kind == ClientMessage.MessageKind.HELLO_RESPONSE)
+        if (message.Kind == ClientMessage.MessageKind.HelloResponse)
             HandleHello(message);
-        else if (message.Kind == ClientMessage.MessageKind.ANSWER)
+        else if (message.Kind == ClientMessage.MessageKind.Answer)
             HandleAnswer(message);
-        else if (message.Kind == ClientMessage.MessageKind.SISYPHUS_CLICK)
+        else if (message.Kind == ClientMessage.MessageKind.SisyphusClick)
             HandleSisyphus(message);
         else Debug.LogWarning("Uknown message kind: " + message.Kind);
     }
@@ -288,11 +291,14 @@ public class GameControl : MonoBehaviour
     private void GameOver(Players winner)
     {
         Debug.Log("Game over! The winner is: " + winner);
+        gameOver = true;
         if (winner == Players.Sisyphus)
             SisyphusWins();
         else SisyphusDies();
-        gameOver = true;
-        // TODO...
+        var msg = new ServerMessage();
+        msg.Kind = ServerMessage.MessageKind.GameOver;
+        msg.Winner = winner;
+        sc.server.SendMessage(msg);
     }
 
 }

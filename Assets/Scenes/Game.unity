@@ -553,41 +553,10 @@ PrefabInstance:
       propertyPath: m_Size.x
       value: 6.858033
       objectReference: {fileID: 0}
-    - target: {fileID: 2385861595221708346, guid: fa23101fab42544f7b6e5894b7655699,
-        type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: 21300000, guid: 861164b6ea5834988b81db37ddf74d22,
-        type: 3}
-    - target: {fileID: 4032948379324959874, guid: fa23101fab42544f7b6e5894b7655699,
-        type: 3}
-      propertyPath: m_Simulated
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 4415317943997610577, guid: fa23101fab42544f7b6e5894b7655699,
         type: 3}
       propertyPath: m_Name
       value: Mountain
-      objectReference: {fileID: 0}
-    - target: {fileID: 5038042254819058576, guid: fa23101fab42544f7b6e5894b7655699,
-        type: 3}
-      propertyPath: m_Points.Array.data[1].x
-      value: 20.690351
-      objectReference: {fileID: 0}
-    - target: {fileID: 5038042254819058576, guid: fa23101fab42544f7b6e5894b7655699,
-        type: 3}
-      propertyPath: m_Points.Array.data[1].y
-      value: 1.7885313
-      objectReference: {fileID: 0}
-    - target: {fileID: 5038042254819058576, guid: fa23101fab42544f7b6e5894b7655699,
-        type: 3}
-      propertyPath: m_Points.Array.data[0].x
-      value: -20.598448
-      objectReference: {fileID: 0}
-    - target: {fileID: 5038042254819058576, guid: fa23101fab42544f7b6e5894b7655699,
-        type: 3}
-      propertyPath: m_Points.Array.data[0].y
-      value: 1.6364805
       objectReference: {fileID: 0}
     - target: {fileID: 6597107472957670790, guid: fa23101fab42544f7b6e5894b7655699,
         type: 3}
@@ -678,6 +647,37 @@ PrefabInstance:
         type: 3}
       propertyPath: moveSpeed
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2385861595221708346, guid: fa23101fab42544f7b6e5894b7655699,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 861164b6ea5834988b81db37ddf74d22,
+        type: 3}
+    - target: {fileID: 5038042254819058576, guid: fa23101fab42544f7b6e5894b7655699,
+        type: 3}
+      propertyPath: m_Points.Array.data[1].x
+      value: 20.690351
+      objectReference: {fileID: 0}
+    - target: {fileID: 5038042254819058576, guid: fa23101fab42544f7b6e5894b7655699,
+        type: 3}
+      propertyPath: m_Points.Array.data[1].y
+      value: 1.7885313
+      objectReference: {fileID: 0}
+    - target: {fileID: 5038042254819058576, guid: fa23101fab42544f7b6e5894b7655699,
+        type: 3}
+      propertyPath: m_Points.Array.data[0].x
+      value: -20.598448
+      objectReference: {fileID: 0}
+    - target: {fileID: 5038042254819058576, guid: fa23101fab42544f7b6e5894b7655699,
+        type: 3}
+      propertyPath: m_Points.Array.data[0].y
+      value: 1.6364805
+      objectReference: {fileID: 0}
+    - target: {fileID: 4032948379324959874, guid: fa23101fab42544f7b6e5894b7655699,
+        type: 3}
+      propertyPath: m_Simulated
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fa23101fab42544f7b6e5894b7655699, type: 3}
@@ -1941,12 +1941,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ed57b7794eb91447b5a0413a3dc1980, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  iterationsCount: 0
-  lastIteration: 0
   player: {fileID: 338146351}
   ball: {fileID: 39175435}
   ballPosition: {fileID: 39175437}
-  obsticleTimeout: 2
   lightning: {fileID: 1211004941}
   obsticleTimer: {fileID: 1155898444}
   gameTimer: {fileID: 2083297397}
@@ -2150,36 +2147,10 @@ PrefabInstance:
       propertyPath: m_Size.x
       value: 6.858033
       objectReference: {fileID: 0}
-    - target: {fileID: 2385861595221708346, guid: fa23101fab42544f7b6e5894b7655699,
-        type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: 21300000, guid: 861164b6ea5834988b81db37ddf74d22,
-        type: 3}
     - target: {fileID: 4415317943997610577, guid: fa23101fab42544f7b6e5894b7655699,
         type: 3}
       propertyPath: m_Name
       value: Mountain
-      objectReference: {fileID: 0}
-    - target: {fileID: 5038042254819058576, guid: fa23101fab42544f7b6e5894b7655699,
-        type: 3}
-      propertyPath: m_Points.Array.data[1].x
-      value: 20.690351
-      objectReference: {fileID: 0}
-    - target: {fileID: 5038042254819058576, guid: fa23101fab42544f7b6e5894b7655699,
-        type: 3}
-      propertyPath: m_Points.Array.data[1].y
-      value: 1.7885313
-      objectReference: {fileID: 0}
-    - target: {fileID: 5038042254819058576, guid: fa23101fab42544f7b6e5894b7655699,
-        type: 3}
-      propertyPath: m_Points.Array.data[0].x
-      value: -20.598448
-      objectReference: {fileID: 0}
-    - target: {fileID: 5038042254819058576, guid: fa23101fab42544f7b6e5894b7655699,
-        type: 3}
-      propertyPath: m_Points.Array.data[0].y
-      value: 1.6364805
       objectReference: {fileID: 0}
     - target: {fileID: 6597107472957670790, guid: fa23101fab42544f7b6e5894b7655699,
         type: 3}
@@ -2270,6 +2241,32 @@ PrefabInstance:
         type: 3}
       propertyPath: moveSpeed
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2385861595221708346, guid: fa23101fab42544f7b6e5894b7655699,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 861164b6ea5834988b81db37ddf74d22,
+        type: 3}
+    - target: {fileID: 5038042254819058576, guid: fa23101fab42544f7b6e5894b7655699,
+        type: 3}
+      propertyPath: m_Points.Array.data[1].x
+      value: 20.690351
+      objectReference: {fileID: 0}
+    - target: {fileID: 5038042254819058576, guid: fa23101fab42544f7b6e5894b7655699,
+        type: 3}
+      propertyPath: m_Points.Array.data[1].y
+      value: 1.7885313
+      objectReference: {fileID: 0}
+    - target: {fileID: 5038042254819058576, guid: fa23101fab42544f7b6e5894b7655699,
+        type: 3}
+      propertyPath: m_Points.Array.data[0].x
+      value: -20.598448
+      objectReference: {fileID: 0}
+    - target: {fileID: 5038042254819058576, guid: fa23101fab42544f7b6e5894b7655699,
+        type: 3}
+      propertyPath: m_Points.Array.data[0].y
+      value: 1.6364805
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fa23101fab42544f7b6e5894b7655699, type: 3}

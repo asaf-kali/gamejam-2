@@ -8,10 +8,10 @@ public class ServerMessage : BaseMessage
 {
     public enum MessageKind
     {
-        UNDEFINED,
-        HELLO,
-        NEW_OBSTICLE,
-        CLEAR,
+        Hello,
+        NewObsticle,
+        Clear,
+        GameOver,
     }
 
     [DataMember]
@@ -19,6 +19,9 @@ public class ServerMessage : BaseMessage
 
     [DataMember]
     public Dictionary<string, string> AnswersDict;
+
+    [DataMember]
+    public GameControl.Players Winner;
 
     public ServerMessage() : this(null)
     {
