@@ -17,17 +17,8 @@ public class LineController : MonoBehaviour
 
     void Update()
     {
-        if (GameControl.instance.iterationsCount < GameControl.LINT_ITER_NUMER)
-        {
-            if (transform.localPosition.y <= endY)
-            {
-                transform.localPosition = startPoint;
-                GameControl.instance.iterationsCount += 1;
-            }
-            else
-                transform.Translate(moveDirection * Time.deltaTime * moveSpeed);
-        }
-        else
-            GameControl.instance.lastIteration = true;
+        transform.Translate(moveDirection * Time.deltaTime * moveSpeed);
+        if (transform.localPosition.y <= endY)
+            transform.localPosition = startPoint;
     }
 }

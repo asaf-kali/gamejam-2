@@ -11,8 +11,9 @@ public class GodController : MonoBehaviour
     public GameObject canvas;
     public GameObject buttonBase;
     public TextMeshProUGUI commandsText;
+    public TextMeshProUGUI guidance;
 
-    private const int OPTIONS_NUM = 9;
+    private const int OPTIONS_NUM = 6;
     private const float BUTTON_Y_DIFF = 100;
 
     private HashSet<GameObject> buttons = new HashSet<GameObject>();
@@ -77,9 +78,11 @@ public class GodController : MonoBehaviour
     private void DisplayAsCommander(HashSet<string> answers)
     {
         HideButtons();
+        Debug.Log("Commands to show are: " + string.Join(",", answers));
+        guidance.text = "צעק לחבריך!";
+        guidance.gameObject.SetActive(true);
         commandsText.text = string.Join("\n", answers);
         commandsText.gameObject.SetActive(true);
-        Debug.Log("Commands to show are: " + string.Join(",", answers));
     }
 
     private void ShowCommands(HashSet<string> commands)
@@ -103,6 +106,7 @@ public class GodController : MonoBehaviour
 
     private void DisplayAsGod(HashSet<string> commands)
     {
+        guidance.gameObject.SetActive(false);
         commandsText.gameObject.SetActive(false);
         ShowCommands(commands);
         Debug.Log("Commands to show are: " + string.Join(",", commands));
@@ -131,6 +135,7 @@ public class GodController : MonoBehaviour
         ClientMessage msg = new ClientMessage("Hi!");
         msg.Kind = ClientMessage.MessageKind.HELLO_RESPONSE;
         cc.client.SendMessage(msg);
+        guidance.text = "המשחק החל!";
     }
 
     private void HandleNewObsticle(ServerMessage message)
@@ -147,6 +152,7 @@ public class GodController : MonoBehaviour
     {
         HideButtons();
         commandsText.gameObject.SetActive(false);
+        guidance.gameObject.SetActive(false);
     }
 
     void MessageReceived(ServerMessage message)

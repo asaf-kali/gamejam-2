@@ -23,8 +23,6 @@ public class GameControl : MonoBehaviour
     public static GameControl instance;
 
     private static System.Random r = new System.Random();
-    public int iterationsCount = 0;
-    public bool lastIteration = false;
 
     public GameObject player;
     public GameObject ball;
