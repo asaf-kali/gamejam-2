@@ -17,7 +17,7 @@ public class GameControl : MonoBehaviour
 
     private const float TIME_FOR_OBSTICLE = 5f;
     private const float TIME_BETWEEN_OBSTICLES = 1.5f;
-    private const int NUMBER_OF_REQUIRED_HITS = 3;
+    private const int NUMBER_OF_REQUIRED_HITS = 6;
     public const int LINT_ITER_NUMER = 1;
     private const int GAME_TIMEOUT = 50;
 
@@ -116,7 +116,7 @@ public class GameControl : MonoBehaviour
 
     private void WinnerCheck()
     {
-        if (godScore == 3)
+        if (godScore == NUMBER_OF_REQUIRED_HITS)
             GameOver(Players.Gods);
         else if (gameTime >= GAME_TIMEOUT)
             GameOver(Players.Sisyphus);
